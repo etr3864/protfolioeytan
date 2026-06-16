@@ -42,39 +42,52 @@ export function ExperienceSection() {
                       )}
                     </div>
 
-                    <div className="p-5 sm:p-6">
-                      <div className="flex flex-wrap items-start gap-5">
+                    <div className="p-4 sm:p-6">
+                      <div className="flex items-start gap-3 sm:gap-5">
                         {item.url ? (
                           <a
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 transition-all duration-200 hover:border-amber-500/30 hover:scale-[1.06] ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}
+                            className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-white/10 transition-all duration-200 hover:border-amber-500/30 sm:h-16 sm:w-16 sm:rounded-2xl ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}
                           >
-                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2.5" sizes="64px" />
+                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2 sm:p-2.5" sizes="64px" />
                           </a>
                         ) : (
-                          <div className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}>
-                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2.5" sizes="64px" />
+                          <div className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-16 sm:w-16 sm:rounded-2xl ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}>
+                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2 sm:p-2.5" sizes="64px" />
                           </div>
                         )}
 
                         <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <h3 className="text-lg font-bold text-white sm:text-xl">{item.role}</h3>
-                            <span className="rounded-full border border-white/8 bg-white/5 px-3 py-1 text-xs text-white/50">
-                              {item.period}
-                            </span>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <h3 className="text-base font-bold text-white sm:text-xl">{item.role}</h3>
+                              {item.url ? (
+                                <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-white/50 transition-colors hover:text-amber-300 sm:text-sm">
+                                  {item.company}
+                                  <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l6-6M4.5 3H9v4.5" /></svg>
+                                </a>
+                              ) : (
+                                <p className="mt-0.5 text-xs font-medium text-white/50 sm:text-sm">{item.company}</p>
+                              )}
+                            </div>
+                            <motion.svg
+                              animate={{ rotate: isActive ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="h-4 w-4 shrink-0 text-white/30 mt-1"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M4 6l4 4 4-4" />
+                            </motion.svg>
                           </div>
-                          {item.url ? (
-                            <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-white/50 transition-colors hover:text-amber-300">
-                              {item.company}
-                              <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l6-6M4.5 3H9v4.5" /></svg>
-                            </a>
-                          ) : (
-                            <p className="mt-1 text-sm font-medium text-white/50">{item.company}</p>
-                          )}
+                          <span className="mt-1.5 inline-block rounded-full border border-white/8 bg-white/5 px-2.5 py-0.5 text-[10px] text-white/45 sm:text-xs">
+                            {item.period}
+                          </span>
                         </div>
                       </div>
 
@@ -91,13 +104,13 @@ export function ExperienceSection() {
                             }}
                             className="overflow-hidden"
                           >
-                            <ul className="mt-5 space-y-2.5 border-t border-white/8 pt-5">
+                            <ul className="mt-4 space-y-2 border-t border-white/8 pt-4 sm:mt-5 sm:space-y-2.5 sm:pt-5">
                               {item.bullets.map((bullet) => (
                                 <li
                                   key={bullet.slice(0, 40)}
-                                  className="flex gap-3 text-[13px] leading-relaxed text-white/60 sm:text-sm"
+                                  className="flex gap-2.5 text-[12px] leading-relaxed text-white/60 sm:gap-3 sm:text-sm"
                                 >
-                                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/70" />
+                                  <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/70" />
                                   <span dir="auto" className="text-start">{bullet}</span>
                                 </li>
                               ))}

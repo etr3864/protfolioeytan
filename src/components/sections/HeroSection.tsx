@@ -94,19 +94,21 @@ function TypingTerminal() {
   }, []);
 
   return (
-    <div className="relative h-[220px] overflow-hidden font-mono text-[9px] leading-[1.6] xl:text-[10px]">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-6 bg-gradient-to-t from-[#0c0c14] to-transparent" />
-      <div className="flex flex-col justify-end h-full space-y-0.5 pb-1">
-        {lines.map((line, i) => (
-          <div key={i} className={line.isOutput ? "ps-3 text-amber-400/40" : "text-white/50"}>
-            {!line.isOutput && <span className="text-green-400/70">{"❯"} </span>}
-            {line.isOutput ? line.text.slice(2) : line.text.slice(2)}
-          </div>
-        ))}
-        <div className="flex gap-1 text-white/50">
+    <div className="relative h-full overflow-hidden font-mono text-[9px] leading-[1.6] xl:text-[10px]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4 bg-gradient-to-b from-[#0c0c14] to-transparent" />
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="flex-1 overflow-hidden flex flex-col justify-end space-y-0.5">
+          {lines.map((line, i) => (
+            <div key={i} className={`shrink-0 ${line.isOutput ? "ps-3 text-amber-400/40" : "text-white/50"}`}>
+              {!line.isOutput && <span className="text-green-400/70">{"❯"} </span>}
+              {line.isOutput ? line.text.slice(2) : line.text.slice(2)}
+            </div>
+          ))}
+        </div>
+        <div className="shrink-0 flex gap-1 text-white/50 pt-0.5">
           <span className="text-green-400/70">❯</span>
-          <span>{currentCmd}</span>
-          <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-amber-400 transition-opacity duration-100`}>▋</span>
+          <span className="truncate">{currentCmd}</span>
+          <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-amber-400`}>▋</span>
         </div>
       </div>
     </div>
@@ -150,7 +152,9 @@ export function HeroSection() {
                 <span className="h-2 w-2 rounded-full bg-green-500/60" />
                 <span className="ms-2 text-[9px] text-white/25 font-mono">zsh — 120×40</span>
               </div>
-              <TypingTerminal />
+              <div className="h-[220px]">
+                <TypingTerminal />
+              </div>
             </div>
           </motion.div>
 

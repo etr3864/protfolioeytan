@@ -25,7 +25,6 @@ export function ExperienceSection() {
               return (
                 <Reveal key={item.id} delay={index * 0.08}>
                   <motion.article
-                    layout
                     onMouseEnter={() => setActiveId(item.id)}
                     onClick={() => setActiveId(isActive ? null : item.id)}
                     className={`group relative cursor-pointer rounded-2xl border transition-all duration-300 sm:ps-20 ${
@@ -82,14 +81,18 @@ export function ExperienceSection() {
 
                       <AnimatePresence initial={false}>
                         {isActive && (
-                          <motion.ul
+                          <motion.div
+                            key="bullets"
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                              height: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
+                              opacity: { duration: 0.2, delay: 0.05 },
+                            }}
                             className="overflow-hidden"
                           >
-                            <div className="mt-5 space-y-2.5 border-t border-white/8 pt-5">
+                            <ul className="mt-5 space-y-2.5 border-t border-white/8 pt-5">
                               {item.bullets.map((bullet) => (
                                 <li
                                   key={bullet.slice(0, 40)}
@@ -99,8 +102,8 @@ export function ExperienceSection() {
                                   <span dir="auto" className="text-start">{bullet}</span>
                                 </li>
                               ))}
-                            </div>
-                          </motion.ul>
+                            </ul>
+                          </motion.div>
                         )}
                       </AnimatePresence>
                     </div>

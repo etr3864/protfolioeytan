@@ -13,6 +13,6 @@
   <circle cx="200" cy="180" r="90" fill="url(#ring)" opacity="0.25"/>
   <circle cx="200" cy="180" r="70" fill="#0f172a" stroke="url(#ring)" stroke-width="3"/>
   <text x="200" y="195" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="48" font-weight="700">ET</text>
-  <text x="200" y="320" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="14">ФвЬФ кЮХак диХдЩЬ</text>
+  <text x="200" y="320" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="14">Ч”ЧўЧњЧ” ЧЄЧћЧ•Ч ЧЄ Ч¤ЧЁЧ•Ч¤Ч™Чњ</text>
   <text x="200" y="342" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="12">/public/images/profile.jpg</text>
 </svg>

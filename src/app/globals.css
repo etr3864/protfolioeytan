@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), var(--font-heebo), system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), var(--font-heebo), system-ui, sans-serif;
 }
 
 * {
@@ -44,11 +44,28 @@ body {
 
 [dir="rtl"] body,
 [dir="rtl"] {
-  font-family: var(--font-heebo), var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-heebo), var(--font-jakarta), system-ui, sans-serif;
+}
+
+[dir="rtl"] [dir="auto"] {
+  unicode-bidi: plaintext;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-gradient-text {
+  animation: gradient-shift 6s linear infinite;
+}
+
+.neural-net {
+  opacity: 0.5;
 }
 
 ::selection {
-  background: rgba(99, 102, 241, 0.35);
+  background: rgba(217, 169, 56, 0.3);
   color: white;
 }
 

@@ -6,7 +6,7 @@ export function SectionHeading({ title, subtitle }: { title: string; subtitle?: 
           {title}
         </span>
       </h2>
-      <div className="mt-3 h-px w-16 bg-gradient-to-r from-indigo-500 to-cyan-500" />
+      <div className="mt-3 h-px w-16 bg-gradient-to-r from-amber-500 to-amber-300/50" />
       {subtitle && <p className="mt-3 text-sm text-white/50">{subtitle}</p>}
     </div>
   );

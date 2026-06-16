@@ -6,9 +6,10 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const categoryColors: Record<string, string> = {
-  tech: "from-indigo-500/20 to-indigo-500/5 border-indigo-400/20 text-indigo-200",
-  marketing: "from-cyan-500/20 to-cyan-500/5 border-cyan-400/20 text-cyan-200",
-  leadership: "from-violet-500/20 to-violet-500/5 border-violet-400/20 text-violet-200",
+  ai: "from-white/[0.06] to-white/[0.02] border-white/15 text-white/85",
+  infra: "from-white/[0.05] to-white/[0.01] border-white/12 text-white/80",
+  marketing: "from-amber-500/10 to-amber-500/[0.03] border-amber-500/15 text-amber-200",
+  management: "from-amber-500/[0.06] to-transparent border-amber-500/10 text-amber-100",
 };
 
 export function SkillsSection() {
@@ -19,7 +20,7 @@ export function SkillsSection() {
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={content.skills.title} />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2">
           {content.skills.categories.map((cat, catIndex) => (
             <Reveal key={cat.id} delay={catIndex * 0.08}>
               <motion.div

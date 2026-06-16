@@ -57,7 +57,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] text-white/90">
         <div className="flex min-h-screen items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-cyan-400" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-amber-400" />
         </div>
       </div>
     );

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
-import { cvDownloads } from "@/data/cv";
 
 const navIds = ["about", "experience", "education", "skills", "contact"] as const;
 
@@ -13,7 +12,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -42,28 +41,23 @@ export function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed inset-x-0 top-0 z-50 transition-[background,backdrop-filter,border] duration-300 ${
-          scrolled || menuOpen
-            ? "border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent"
-        }`}
+        className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4"
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <button
-            onClick={() => scrollTo("hero")}
-            className="group text-sm font-semibold tracking-tight text-white transition-colors hover:text-cyan-300"
-          >
-            <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-              {content.meta.name.split(" ")[0]}
-            </span>
-          </button>
-
-          <nav className="hidden items-center gap-1 md:flex">
+        <motion.div
+          animate={{
+            backgroundColor: scrolled || menuOpen ? "rgba(15,15,20,0.7)" : "rgba(15,15,20,0)",
+            backdropFilter: scrolled || menuOpen ? "blur(16px) saturate(1.2)" : "blur(0px)",
+            borderColor: scrolled || menuOpen ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0)",
+          }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="flex h-12 w-full max-w-4xl items-center justify-between rounded-full border px-5"
+        >
+          <nav className="hidden items-center gap-0.5 md:flex">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollTo(link.id)}
-                className="rounded-lg px-3 py-2 text-sm text-white/70 transition-all duration-200 hover:bg-white/5 hover:text-white"
+                className="rounded-full px-3 py-1.5 text-[13px] text-white/60 transition-all duration-200 hover:bg-white/5 hover:text-white"
               >
                 {link.label}
               </button>
@@ -73,36 +67,27 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleLocale}
-              className="relative flex h-9 min-w-[72px] items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs font-medium text-white/90 transition-all duration-200 hover:border-white/20 hover:bg-white/10"
+              className="flex h-8 items-center gap-1.5 rounded-full border border-white/8 bg-white/5 px-3 text-xs font-medium text-white/80 transition-all duration-200 hover:border-white/15 hover:bg-white/8"
               aria-label="Toggle language"
             >
-              <span className={locale === "he" ? "text-cyan-300" : "text-white/50"}>HE</span>
-              <span className="mx-1.5 text-white/30">|</span>
-              <span className={locale === "en" ? "text-cyan-300" : "text-white/50"}>EN</span>
+              <span className={locale === "en" ? "text-amber-300" : "text-white/50"}>EN</span>
+              <span className="text-white/20">|</span>
+              <span className={locale === "he" ? "text-amber-300" : "text-white/50"}>HE</span>
             </button>
-
-            <a
-              href={cvDownloads[locale]}
-              download
-              className="hidden rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-500/20 transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] sm:inline-block"
-            >
-              {content.nav.downloadCv}
-            </a>
 
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/80 md:hidden"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/70 md:hidden"
               aria-label="Menu"
             >
-              <span className="sr-only">Menu</span>
-              <div className="flex flex-col gap-1">
-                <span className={`block h-0.5 w-4 bg-current transition-transform ${menuOpen ? "translate-y-1.5 rotate-45" : ""}`} />
-                <span className={`block h-0.5 w-4 bg-current transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
-                <span className={`block h-0.5 w-4 bg-current transition-transform ${menuOpen ? "-translate-y-1.5 -rotate-45" : ""}`} />
+              <div className="flex flex-col gap-[3px]">
+                <span className={`block h-[1.5px] w-3.5 bg-current transition-transform duration-200 ${menuOpen ? "translate-y-[5px] rotate-45" : ""}`} />
+                <span className={`block h-[1.5px] w-3.5 bg-current transition-opacity duration-200 ${menuOpen ? "opacity-0" : ""}`} />
+                <span className={`block h-[1.5px] w-3.5 bg-current transition-transform duration-200 ${menuOpen ? "-translate-y-[5px] -rotate-45" : ""}`} />
               </div>
             </button>
           </div>
-        </div>
+        </motion.div>
       </motion.header>
 
       <AnimatePresence>
@@ -134,13 +119,6 @@ export function Navbar() {
                   {link.label}
                 </motion.button>
               ))}
-              <a
-                href={cvDownloads[locale]}
-                download
-                className="mt-4 w-full max-w-xs rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-3 text-center text-sm font-semibold text-white"
-              >
-                {content.nav.downloadCv}
-              </a>
             </motion.nav>
           </motion.div>
         )}

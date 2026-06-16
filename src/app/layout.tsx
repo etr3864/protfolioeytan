@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Heebo } from "next/font/google";
+import { Plus_Jakarta_Sans, Heebo } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["hebrew", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -18,6 +20,9 @@ export const metadata: Metadata = {
   title: "Eytan Turgeman | AI Solutions Developer & Marketing Strategist",
   description:
     "AI Solutions Developer with marketing strategy background. Python, JavaScript, GCP, PPC, and team leadership.",
+  icons: {
+    icon: "/icon.svg",
+  },
   openGraph: {
     title: "Eytan Turgeman | CV",
     description: "AI · Marketing · Leadership",
@@ -31,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" className={`${inter.variable} ${heebo.variable} h-full scroll-smooth`}>
+    <html lang="he" className={`${jakarta.variable} ${heebo.variable} h-full scroll-smooth`}>
       <body className="min-h-full bg-[#0a0a0f] font-sans antialiased">{children}</body>
     </html>
   );

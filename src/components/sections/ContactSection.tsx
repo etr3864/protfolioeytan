@@ -16,13 +16,13 @@ export function ContactSection() {
       label: contact.email,
       value: meta.email,
       href: `mailto:${meta.email}`,
-      icon: <IconMail className="h-5 w-5 text-indigo-300" />,
+      icon: <IconMail className="h-5 w-5 text-amber-300" />,
     },
     {
       label: contact.phone,
       value: meta.phone,
       href: `tel:+972${meta.phone.replace(/^0/, "")}`,
-      icon: <IconPhone className="h-5 w-5 text-cyan-300" />,
+      icon: <IconPhone className="h-5 w-5 text-amber-300" />,
     },
     {
       label: contact.linkedin,
@@ -45,7 +45,7 @@ export function ContactSection() {
                   href={link.href}
                   target={link.href.startsWith("http") ? "_blank" : undefined}
                   rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  whileHover={{ x: 4, borderColor: "rgba(99,102,241,0.4)" }}
+                  whileHover={{ x: 4, borderColor: "rgba(217,169,56,0.35)" }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:bg-white/[0.05]"
                 >
@@ -63,8 +63,8 @@ export function ContactSection() {
 
           <Reveal delay={0.15}>
             <motion.div
-              whileHover={{ borderColor: "rgba(6,182,212,0.35)" }}
-              className="flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-transparent to-cyan-500/10 p-6 sm:p-8"
+              whileHover={{ borderColor: "rgba(217,169,56,0.3)" }}
+              className="flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-amber-600/8 via-transparent to-amber-600/5 p-6 sm:p-8"
             >
               <p className="text-sm text-white/60">Download full CV</p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -73,7 +73,7 @@ export function ContactSection() {
                   download
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-3 text-center text-sm font-semibold text-white"
+                  className="flex-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-4 py-3 text-center text-sm font-semibold text-white"
                 >
                   {contact.downloadEn}
                 </motion.a>

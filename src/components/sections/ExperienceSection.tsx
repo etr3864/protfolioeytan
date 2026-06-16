@@ -17,55 +17,66 @@ export function ExperienceSection() {
         <SectionHeading title={content.experience.title} />
 
         <div className="relative">
-          <div className="absolute top-0 bottom-0 start-[27px] hidden w-px bg-gradient-to-b from-indigo-500/50 via-white/10 to-transparent sm:block" />
+          <div className="absolute top-0 bottom-0 start-[35px] hidden w-px bg-gradient-to-b from-amber-600/40 via-white/8 to-transparent sm:block" />
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {content.experience.items.map((item, index) => {
               const isActive = activeId === item.id;
               return (
-                <Reveal key={item.id} delay={index * 0.06}>
+                <Reveal key={item.id} delay={index * 0.08}>
                   <motion.article
                     layout
                     onMouseEnter={() => setActiveId(item.id)}
                     onClick={() => setActiveId(isActive ? null : item.id)}
-                    className={`group relative cursor-pointer rounded-2xl border transition-colors duration-300 sm:ps-16 ${
+                    className={`group relative cursor-pointer rounded-2xl border transition-all duration-300 sm:ps-20 ${
                       isActive
-                        ? "border-indigo-400/30 bg-indigo-500/[0.06]"
-                        : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                        ? "border-amber-500/20 bg-white/[0.03]"
+                        : "border-white/8 bg-white/[0.015] hover:border-white/15 hover:bg-white/[0.03]"
                     }`}
                   >
-                    <div className="absolute start-[19px] top-8 hidden h-4 w-4 rounded-full border-2 border-indigo-400 bg-[#0a0a0f] sm:block">
+                    <div className="absolute start-[27px] top-8 hidden h-[18px] w-[18px] rounded-full border-2 border-white/20 bg-[#0a0a0f] sm:block">
                       {isActive && (
                         <motion.span
                           layoutId="timeline-dot"
-                          className="absolute inset-0.5 rounded-full bg-gradient-to-br from-indigo-400 to-cyan-400"
+                          className="absolute inset-[3px] rounded-full bg-amber-400"
+                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         />
                       )}
                     </div>
 
                     <div className="p-5 sm:p-6">
-                      <div className="flex flex-wrap items-start gap-4">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5"
-                        >
-                          <Image
-                            src={item.logo}
-                            alt={item.company}
-                            fill
-                            className="object-contain p-2"
-                            sizes="48px"
-                          />
-                        </motion.div>
+                      <div className="flex flex-wrap items-start gap-5">
+                        {item.url ? (
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 transition-all duration-200 hover:border-amber-500/30 hover:scale-[1.06] ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}
+                          >
+                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2.5" sizes="64px" />
+                          </a>
+                        ) : (
+                          <div className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 ${item.id === "optive" ? "bg-white" : "bg-white/5"}`}>
+                            <Image src={item.logo} alt={item.company} fill className="object-contain p-2.5" sizes="64px" />
+                          </div>
+                        )}
 
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <h3 className="text-lg font-semibold text-white">{item.role}</h3>
-                            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-white/60">
+                            <h3 className="text-lg font-bold text-white sm:text-xl">{item.role}</h3>
+                            <span className="rounded-full border border-white/8 bg-white/5 px-3 py-1 text-xs text-white/50">
                               {item.period}
                             </span>
                           </div>
-                          <p className="mt-0.5 text-sm font-medium text-cyan-300/90">{item.company}</p>
+                          {item.url ? (
+                            <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-white/50 transition-colors hover:text-amber-300">
+                              {item.company}
+                              <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l6-6M4.5 3H9v4.5" /></svg>
+                            </a>
+                          ) : (
+                            <p className="mt-1 text-sm font-medium text-white/50">{item.company}</p>
+                          )}
                         </div>
                       </div>
 
@@ -75,17 +86,17 @@ export function ExperienceSection() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                             className="overflow-hidden"
                           >
-                            <div className="mt-4 space-y-2 border-t border-white/10 pt-4">
+                            <div className="mt-5 space-y-2.5 border-t border-white/8 pt-5">
                               {item.bullets.map((bullet) => (
                                 <li
                                   key={bullet.slice(0, 40)}
-                                  className="flex gap-2 text-sm leading-relaxed text-white/65"
+                                  className="flex gap-3 text-[13px] leading-relaxed text-white/60 sm:text-sm"
                                 >
-                                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-cyan-400" />
-                                  <span>{bullet}</span>
+                                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/70" />
+                                  <span dir="auto" className="text-start">{bullet}</span>
                                 </li>
                               ))}
                             </div>

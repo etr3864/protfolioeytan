@@ -56,10 +56,10 @@ function TypingTerminal() {
         if (charIdx <= line.cmd.length) {
           setCurrentCmd(line.cmd.slice(0, charIdx));
           charIdx++;
-          timeout = setTimeout(tick, 35 + Math.random() * 25);
+          timeout = setTimeout(tick, 18 + Math.random() * 18);
         } else {
           typing = false;
-          timeout = setTimeout(tick, 300);
+          timeout = setTimeout(tick, 150);
         }
       } else {
         setLines((prev) => {
@@ -72,11 +72,11 @@ function TypingTerminal() {
         charIdx = 0;
         typing = true;
         idx++;
-        timeout = setTimeout(tick, 800 + Math.random() * 400);
+        timeout = setTimeout(tick, 400 + Math.random() * 200);
       }
     };
 
-    timeout = setTimeout(tick, 1200);
+    timeout = setTimeout(tick, 300);
 
     const cursorBlink = setInterval(() => setShowCursor((v) => !v), 530);
 

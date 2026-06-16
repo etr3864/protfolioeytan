@@ -44,12 +44,15 @@ export function BackgroundOrbs() {
   const smoothY = useSpring(mouseY, { stiffness: 800, damping: 40 });
 
   const [mounted, setMounted] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const layerFront = useMemo(() => generateNetwork(7, 10, 0), []);
   const layerBack = useMemo(() => generateNetwork(5, 7, 500), []);
 
   useEffect(() => {
     setMounted(true);
-    if (reduced) return;
+    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    setIsTouch(touch);
+    if (reduced || touch) return;
 
     const handleMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -131,8 +134,8 @@ export function BackgroundOrbs() {
         </motion.svg>
       )}
 
-      {/* Mouse-following amber glow */}
-      {mounted && !reduced && (
+      {/* Mouse-following amber glow - desktop only */}
+      {mounted && !reduced && !isTouch && (
         <motion.div
           style={{
             left: smoothX,

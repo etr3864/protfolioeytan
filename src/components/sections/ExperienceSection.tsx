@@ -25,7 +25,6 @@ export function ExperienceSection() {
               return (
                 <Reveal key={item.id} delay={index * 0.08}>
                   <motion.article
-                    onMouseEnter={() => setActiveId(item.id)}
                     onClick={() => setActiveId(isActive ? null : item.id)}
                     className={`group relative cursor-pointer rounded-2xl border transition-all duration-300 sm:ps-20 ${
                       isActive

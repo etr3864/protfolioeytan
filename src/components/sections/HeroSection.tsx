@@ -39,12 +39,19 @@ const funnelData = [
 ];
 
 function TypingTerminal() {
-  const [lines, setLines] = useState<{ text: string; isOutput: boolean }[]>([]);
+  const [lines, setLines] = useState<{ text: string; isOutput: boolean }[]>(() => {
+    const initial: { text: string; isOutput: boolean }[] = [];
+    for (let i = 0; i < 3; i++) {
+      initial.push({ text: `❯ ${terminalLines[i].cmd}`, isOutput: false });
+      if (terminalLines[i].output) initial.push({ text: `  ${terminalLines[i].output}`, isOutput: true });
+    }
+    return initial;
+  });
   const [currentCmd, setCurrentCmd] = useState("");
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
-    let idx = 0;
+    let idx = 3;
     let charIdx = 0;
     let typing = true;
     let timeout: NodeJS.Timeout;

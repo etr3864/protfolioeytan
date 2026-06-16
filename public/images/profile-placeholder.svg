@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="100" y1="80" x2="300" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#bg)"/>
+  <circle cx="200" cy="180" r="90" fill="url(#ring)" opacity="0.25"/>
+  <circle cx="200" cy="180" r="70" fill="#0f172a" stroke="url(#ring)" stroke-width="3"/>
+  <text x="200" y="195" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="48" font-weight="700">ET</text>
+  <text x="200" y="320" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="14">‘‚‹‘ Íﬁ’‡Í ‰Ë’‰Ÿ‹</text>
+  <text x="200" y="342" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="12">/public/images/profile.jpg</text>
+</svg>

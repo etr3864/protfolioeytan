@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { Reveal } from "@/components/motion/Reveal";
@@ -11,10 +11,21 @@ export function ExperienceSection() {
   const { content } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(content.experience.items[0]?.id ?? null);
   const [isTouch, setIsTouch] = useState(false);
+  const cardRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
     setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
+
+  const handleToggle = useCallback((id: string, isActive: boolean) => {
+    const nextId = isActive ? null : id;
+    setActiveId(nextId);
+    if (nextId && isTouch) {
+      setTimeout(() => {
+        cardRefs.current[nextId]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 350);
+    }
+  }, [isTouch]);
 
   return (
     <section id="experience" className="scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20">
@@ -30,8 +41,9 @@ export function ExperienceSection() {
               return (
                 <Reveal key={item.id} delay={index * 0.08}>
                   <motion.article
+                    ref={(el) => { cardRefs.current[item.id] = el; }}
                     onMouseEnter={!isTouch ? () => setActiveId(item.id) : undefined}
-                    onClick={() => setActiveId(isActive ? null : item.id)}
+                    onClick={() => handleToggle(item.id, isActive)}
                     className={`group relative cursor-pointer rounded-2xl border transition-all duration-300 sm:ps-20 ${
                       isActive
                         ? "border-amber-500/20 bg-white/[0.03]"

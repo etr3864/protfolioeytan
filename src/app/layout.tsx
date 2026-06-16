@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" className={`${jakarta.variable} ${heebo.variable} h-full scroll-smooth`}>
+    <html lang="en" className={`${jakarta.variable} ${heebo.variable} h-full scroll-smooth`}>
       <body className="min-h-full bg-[#0a0a0f] font-sans antialiased">{children}</body>
     </html>
   );

@@ -129,7 +129,7 @@ export function HeroSection() {
       <div className="relative mx-auto max-w-7xl">
         <div className="grid items-center lg:grid-cols-[1fr_minmax(0,2.4fr)_1fr] lg:gap-6 xl:gap-10">
 
-          {/* Terminal Panel (start) - typing effect */}
+          {/* Terminal Panel (start) - desktop only in grid */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -182,7 +182,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl"
+              className="text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl"
             >
               <span className="animate-gradient-text bg-gradient-to-r from-white via-amber-200 to-white bg-[length:200%_auto] bg-clip-text text-transparent">
                 {content.meta.name}
@@ -194,7 +194,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-4 max-w-md text-base font-medium text-white/55 sm:text-lg"
+              className="mt-4 max-w-md text-sm font-medium text-white/55 sm:text-lg"
             >
               {content.meta.title}
             </motion.p>
@@ -208,7 +208,7 @@ export function HeroSection() {
             />
           </div>
 
-          {/* Marketing Panel (end) */}
+          {/* Marketing Panel (end) - desktop only in grid */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -279,6 +279,66 @@ export function HeroSection() {
           </motion.div>
 
         </div>
+
+        {/* Mobile panels - shown below center content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+          className="mt-10 grid grid-cols-2 gap-3 lg:hidden"
+        >
+          {/* Mobile Terminal */}
+          <div className="pointer-events-none rounded-xl border border-white/[0.06] bg-[#0c0c14]/80 p-2.5 shadow-xl backdrop-blur-sm">
+            <div className="mb-1.5 flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500/60" />
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-500/60" />
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500/60" />
+              <span className="ms-1.5 text-[7px] text-white/20 font-mono">terminal</span>
+            </div>
+            <div className="h-[100px] overflow-hidden">
+              <TypingTerminal />
+            </div>
+          </div>
+
+          {/* Mobile Marketing */}
+          <div className="pointer-events-none rounded-xl border border-white/[0.06] bg-[#0c0c14]/80 p-2.5 shadow-xl backdrop-blur-sm">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-[7px] font-medium tracking-wider text-white/30">ANALYTICS</span>
+              <span className="flex items-center gap-0.5 text-[7px] text-green-400/70">
+                <motion.span
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="inline-block h-1 w-1 rounded-full bg-green-400"
+                />
+                LIVE
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 mb-2">
+              {marketingMetrics.slice(0, 4).map((m, i) => (
+                <motion.div
+                  key={m.label}
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                  className="rounded border border-white/[0.04] bg-white/[0.02] px-1 py-1 text-center"
+                >
+                  <div className="text-[7px] text-white/25">{m.label}</div>
+                  <div className="text-[9px] font-semibold text-white/70">{m.value}</div>
+                  <div className="text-[7px] text-green-400/60">{m.delta}</div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="flex items-end gap-[2px] h-5">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="flex-1 rounded-sm bg-amber-500/20"
+                  animate={{ height: [`${20 + (i * 7) % 50}%`, `${35 + (i * 11) % 55}%`, `${20 + (i * 7) % 50}%`] }}
+                  transition={{ duration: 3 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { IconLinkedIn, IconMail, IconPhone } from "@/components/ui/Icons";
 import { useLanguage } from "@/context/LanguageContext";
-import { cvDownloads } from "@/data/cv";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -61,34 +60,6 @@ export function ContactSection() {
             ))}
           </div>
 
-          <Reveal delay={0.15}>
-            <motion.div
-              whileHover={{ borderColor: "rgba(217,169,56,0.3)" }}
-              className="flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-amber-600/8 via-transparent to-amber-600/5 p-6 sm:p-8"
-            >
-              <p className="text-sm text-white/60">Download full CV</p>
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                <motion.a
-                  href={cvDownloads.en}
-                  download
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-4 py-3 text-center text-sm font-semibold text-white"
-                >
-                  {contact.downloadEn}
-                </motion.a>
-                <motion.a
-                  href={cvDownloads.he}
-                  download
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex-1 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-white/90"
-                >
-                  {contact.downloadHe}
-                </motion.a>
-              </div>
-            </motion.div>
-          </Reveal>
         </div>
       </div>
     </section>

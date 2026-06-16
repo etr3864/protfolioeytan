@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { Reveal } from "@/components/motion/Reveal";
@@ -10,6 +10,11 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 export function ExperienceSection() {
   const { content } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(content.experience.items[0]?.id ?? null);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   return (
     <section id="experience" className="scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20">
@@ -25,6 +30,7 @@ export function ExperienceSection() {
               return (
                 <Reveal key={item.id} delay={index * 0.08}>
                   <motion.article
+                    onMouseEnter={!isTouch ? () => setActiveId(item.id) : undefined}
                     onClick={() => setActiveId(isActive ? null : item.id)}
                     className={`group relative cursor-pointer rounded-2xl border transition-all duration-300 sm:ps-20 ${
                       isActive

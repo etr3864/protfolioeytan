@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0d14;
+  --background: #101018;
   --foreground: #f4f4f5;
 }
 
@@ -69,7 +69,7 @@ body {
 }
 
 .neural-net {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 ::selection {
@@ -84,7 +84,7 @@ body {
   }
 
   ::-webkit-scrollbar-track {
-    background: #0d0d14;
+    background: #101018;
   }
 
   ::-webkit-scrollbar-thumb {

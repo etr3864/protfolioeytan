@@ -43,39 +43,39 @@ function CVContent() {
           <SectionDivider />
 
           <div className="relative bg-gradient-to-b from-white/[0.015] via-white/[0.025] to-white/[0.015]">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#101018] to-transparent" />
             <AboutSection />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#101018] to-transparent" />
           </div>
 
           <SectionDivider />
 
           <div className="relative bg-gradient-to-b from-transparent via-amber-950/[0.03] to-transparent">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#101018] to-transparent" />
             <ExperienceSection />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#101018] to-transparent" />
           </div>
 
           <SectionDivider />
 
           <div className="relative bg-gradient-to-b from-white/[0.01] via-white/[0.02] to-white/[0.01]">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#101018] to-transparent" />
             <EducationSection />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#101018] to-transparent" />
           </div>
 
           <SectionDivider />
 
           <div className="relative bg-gradient-to-b from-transparent via-amber-900/[0.025] to-transparent">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#101018] to-transparent" />
             <SkillsSection />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#101018] to-transparent" />
           </div>
 
           <SectionDivider />
 
           <div className="relative bg-gradient-to-b from-white/[0.015] via-white/[0.02] to-transparent">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0d14] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#101018] to-transparent" />
             <ContactSection />
           </div>
         </motion.main>

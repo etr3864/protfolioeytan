@@ -176,9 +176,9 @@ export function HeroSection() {
                   className="object-cover object-[center_15%] scale-110"
                   sizes="(max-width: 768px) 224px, 288px"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0d0d14]/40 via-transparent via-40% to-[#0d0d14]" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent via-70% to-[#0d0d14]/50" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0d14]/60 via-transparent to-[#0d0d14]/60" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#101018]/40 via-transparent via-40% to-[#101018]" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent via-70% to-[#101018]/50" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#101018]/60 via-transparent to-[#101018]/60" />
               </div>
               <motion.div
                 initial={{ opacity: 0 }}

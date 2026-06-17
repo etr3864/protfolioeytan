@@ -53,7 +53,7 @@ export function EducationSection() {
                     {(item.certImage.endsWith(".jpg") || item.certImage.endsWith(".png")) && (
                       <div className={`relative overflow-hidden border-b border-white/[0.06] md:border-b-0 ${imageOnStart ? "md:order-1 md:border-e" : "md:order-2 md:border-s"}`}>
                         <div className="relative aspect-[4/3] md:aspect-auto md:h-full">
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#0d0d14] to-[#0d0d14]" />
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#101018] to-[#101018]" />
                           <div className="absolute inset-4 rounded-2xl border border-white/[0.04]" />
                           <Image
                             src={item.certImage}

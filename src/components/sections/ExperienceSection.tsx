@@ -50,7 +50,7 @@ export function ExperienceSection() {
                         : "border-white/8 bg-white/[0.015] hover:border-white/15 hover:bg-white/[0.03]"
                     }`}
                   >
-                    <div className="absolute start-[27px] top-8 hidden h-[18px] w-[18px] rounded-full border-2 border-white/20 bg-[#0d0d14] sm:block">
+                    <div className="absolute start-[27px] top-8 hidden h-[18px] w-[18px] rounded-full border-2 border-white/20 bg-[#101018] sm:block">
                       {isActive && (
                         <motion.span
                           layoutId="timeline-dot"

@@ -50,7 +50,7 @@ export function ExperienceSection() {
                         : "border-white/8 bg-white/[0.015] hover:border-white/15 hover:bg-white/[0.03]"
                     }`}
                   >
-                    <div className="absolute start-[27px] top-8 hidden h-[18px] w-[18px] rounded-full border-2 border-white/20 bg-[#0a0a0f] sm:block">
+                    <div className="absolute start-[27px] top-8 hidden h-[18px] w-[18px] rounded-full border-2 border-white/20 bg-[#0d0d14] sm:block">
                       {isActive && (
                         <motion.span
                           layoutId="timeline-dot"
@@ -81,14 +81,14 @@ export function ExperienceSection() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                              <h3 className="text-base font-bold text-white sm:text-xl">{item.role}</h3>
+                              <h3 className="text-[15px] font-bold text-white sm:text-xl">{item.role}</h3>
                               {item.url ? (
-                                <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-white/50 transition-colors hover:text-amber-300 sm:text-sm">
+                                <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-0.5 inline-flex items-center gap-1 text-[13px] font-medium text-white/60 transition-colors hover:text-amber-300 sm:text-sm">
                                   {item.company}
                                   <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l6-6M4.5 3H9v4.5" /></svg>
                                 </a>
                               ) : (
-                                <p className="mt-0.5 text-xs font-medium text-white/50 sm:text-sm">{item.company}</p>
+                                <p className="mt-0.5 text-[13px] font-medium text-white/60 sm:text-sm">{item.company}</p>
                               )}
                             </div>
                             <motion.svg
@@ -126,7 +126,7 @@ export function ExperienceSection() {
                               {item.bullets.map((bullet) => (
                                 <li
                                   key={bullet.slice(0, 40)}
-                                  className="flex gap-2.5 text-[12px] leading-relaxed text-white/60 sm:gap-3 sm:text-sm"
+                                  className="flex gap-2.5 text-[13px] leading-relaxed text-white/75 sm:gap-3 sm:text-[15px]"
                                 >
                                   <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/70" />
                                   <span dir="auto" className="text-start">{bullet}</span>

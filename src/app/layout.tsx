@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} ${heebo.variable} h-full scroll-smooth`}>
-      <body className="min-h-full bg-[#0a0a0f] font-sans antialiased">{children}</body>
+      <body className="min-h-full bg-[#0d0d14] font-sans antialiased">{children}</body>
     </html>
   );
 }

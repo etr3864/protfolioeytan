@@ -176,9 +176,9 @@ export function HeroSection() {
                   className="object-cover object-[center_15%] scale-110"
                   sizes="(max-width: 768px) 224px, 288px"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a0a0f]/40 via-transparent via-40% to-[#0a0a0f]" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent via-70% to-[#0a0a0f]/50" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0a0a0f]/60 via-transparent to-[#0a0a0f]/60" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0d0d14]/40 via-transparent via-40% to-[#0d0d14]" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent via-70% to-[#0d0d14]/50" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0d14]/60 via-transparent to-[#0d0d14]/60" />
               </div>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -205,7 +205,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-4 max-w-md text-sm font-medium text-white/55 sm:text-lg"
+              className="mt-4 max-w-md text-base font-medium text-white/70 sm:text-lg"
             >
               {content.meta.title}
             </motion.p>

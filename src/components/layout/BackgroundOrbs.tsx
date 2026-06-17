@@ -65,7 +65,7 @@ export function BackgroundOrbs() {
 
   return (
     <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-      <div className="absolute inset-0 bg-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-[#0d0d14]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(217,169,56,0.06),transparent)]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
@@ -147,7 +147,7 @@ export function BackgroundOrbs() {
         />
       )}
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(10,10,15,0.4)_40%,#0a0a0f_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(10,10,15,0.4)_40%,#0d0d14_100%)]" />
     </div>
   );
 }

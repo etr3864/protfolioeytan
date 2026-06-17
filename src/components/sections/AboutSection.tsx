@@ -26,7 +26,7 @@ export function AboutSection() {
               whileHover={{ borderColor: "rgba(255,255,255,0.18)" }}
               className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:p-8"
             >
-              <div className="space-y-3 text-base leading-relaxed text-white/70 sm:text-[15px]">
+              <div className="space-y-3 text-[15px] leading-relaxed text-white/80 sm:text-base">
                 {content.about.text.split("\n").filter(Boolean).map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
@@ -36,7 +36,7 @@ export function AboutSection() {
 
           <div className="flex flex-col gap-3">
             <Reveal>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-white/40">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-white/50">
                 {content.about.title === "אודותיי" ? "הרקע שלי" : "My Expertise"}
               </p>
             </Reveal>

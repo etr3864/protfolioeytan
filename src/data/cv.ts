@@ -94,7 +94,7 @@ export const cvContent: Record<Locale, CVContent> = {
     },
     about: {
       title: "About Me",
-      text: "I'm Eytan David Turgeman, 23, married to Noa and father to Rafael.\n\nAI Solutions Developer with deep understanding of system architecture, cloud infrastructure, and production-grade deployments. I design and build end-to-end solutions, from real-time voice AI systems on GKE to multi-tenant WhatsApp platforms with RAG, LLM orchestration, and WebSocket integrations.\n\nAs CTO & Co-Founder at Optive, I built two full AI platforms from scratch serving dozens of paying customers, and owned the entire stack: infrastructure, architecture, product, and go-to-market.\n\nMy foundation is in marketing strategy with emphasis on paid media, managing six-figure ad budgets, building conversion funnels, and delivering measurable business growth.",
+      text: "I'm Eytan David Turgeman, 23, married to Noa and father to Rafael.\n\nAI Solutions Developer with deep understanding of system architecture, cloud infrastructure, and production-grade deployments. I design and build end-to-end solutions, from real-time voice AI systems on GKE to multi-tenant WhatsApp platforms with RAG, LLM orchestration, and WebSocket integrations.\n\nAs Founder & Builder at Optive, I built two full AI platforms from scratch serving dozens of paying customers, and owned the entire stack: infrastructure, architecture, product, and go-to-market.\n\nMy foundation is in marketing strategy with emphasis on paid media, managing six-figure ad budgets, building conversion funnels, and delivering measurable business growth.",
       pills: [
         { label: "AI Solutions Design & Implementation", icon: "cpu" },
         { label: "Digital Marketing Strategy & Tactics", icon: "chart" },
@@ -106,7 +106,7 @@ export const cvContent: Record<Locale, CVContent> = {
       items: [
         {
           id: "optive",
-          role: "CEO, CTO & Co-Founder",
+          role: "Founder & Builder",
           company: "Optive LTD",
           url: "https://www.0ptive.com/",
           period: "Jul 2025 — May 2026 · Full-time",
@@ -267,7 +267,7 @@ export const cvContent: Record<Locale, CVContent> = {
     },
     about: {
       title: "אודותיי",
-      text: "אני איתן דוד טורג׳מן, בן 23, נשוי לנועה ואבא לרפאל.\n\nמפתח פתרונות AI עם הבנה עמוקה של ארכיטקטורת מערכות, תשתיות ענן ופריסות production-grade. אני מתכנן ובונה פתרונות end-to-end, ממערכות Voice AI בזמן אמת על GKE ועד פלטפורמות WhatsApp multi-tenant עם RAG, אורקסטרציית LLM ואינטגרציות WebSocket.\n\nכ-CTO ומייסד שותף ב-Optive, בניתי שתי פלטפורמות AI מלאות מאפס שמשרתות עשרות לקוחות משלמים, וניהלתי את כל הסטאק: תשתיות, ארכיטקטורה, מוצר ושיווק.\n\nהבסיס שלי הוא אסטרטגיות שיווק בדגש על ממומן, ניהול תקציבי פרסום של מאות אלפי שקלים, בניית משפכי המרה והשגת צמיחה עסקית מדידה.",
+      text: "אני איתן דוד טורג׳מן, בן 23, נשוי לנועה ואבא לרפאל.\n\nמפתח פתרונות AI עם הבנה עמוקה של ארכיטקטורת מערכות, תשתיות ענן ופריסות production-grade. אני מתכנן ובונה פתרונות end-to-end, ממערכות Voice AI בזמן אמת על GKE ועד פלטפורמות WhatsApp multi-tenant עם RAG, אורקסטרציית LLM ואינטגרציות WebSocket.\n\nכמייסד ושותף טכנולוגי פעיל ובלעדי ב-Optive, בניתי שתי פלטפורמות AI מלאות מאפס שמשרתות עשרות לקוחות משלמים, וניהלתי את כל הסטאק: תשתיות, ארכיטקטורה, מוצר ושיווק.\n\nהבסיס שלי הוא אסטרטגיות שיווק בדגש על ממומן, ניהול תקציבי פרסום של מאות אלפי שקלים, בניית משפכי המרה והשגת צמיחה עסקית מדידה.",
       pills: [
         { label: "תכנון ופיתוח מערכות בינה מלאכותית", icon: "cpu" },
         { label: "מומחה אסטרטגיות וטקטיקות שיווק דיגיטלי", icon: "chart" },
@@ -279,7 +279,7 @@ export const cvContent: Record<Locale, CVContent> = {
       items: [
         {
           id: "optive",
-          role: "מנכ\"ל, CTO ומייסד שותף",
+          role: "מייסד ושותף טכנולוגי פעיל",
           company: "Optive LTD",
           url: "https://www.0ptive.com/",
           period: "יולי 2025 — מאי 2026 · משרה מלאה",

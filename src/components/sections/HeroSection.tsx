@@ -152,7 +152,7 @@ export function HeroSection() {
                 <span className="h-2 w-2 rounded-full bg-green-500/60" />
                 <span className="ms-2 text-[9px] text-white/25 font-mono">zsh — 120×40</span>
               </div>
-              <div className="h-[220px]">
+              <div className="h-[220px] overflow-hidden">
                 <TypingTerminal />
               </div>
             </div>

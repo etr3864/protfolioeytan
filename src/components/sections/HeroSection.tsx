@@ -95,20 +95,20 @@ function TypingTerminal() {
 
   return (
     <div className="relative h-full overflow-hidden font-mono text-[9px] leading-[1.6] xl:text-[10px]">
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4 bg-gradient-to-b from-[#0c0c14] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4 bg-gradient-to-b from-[#101018] to-transparent" />
       <div className="flex h-full flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden flex flex-col justify-end space-y-0.5">
           {lines.map((line, i) => (
-            <div key={i} className={`shrink-0 ${line.isOutput ? "ps-3 text-amber-400/40" : "text-white/50"}`}>
+            <div key={i} className={`shrink-0 truncate ${line.isOutput ? "ps-3 text-amber-400/40" : "text-white/50"}`}>
               {!line.isOutput && <span className="text-green-400/70">{"❯"} </span>}
               {line.isOutput ? line.text.slice(2) : line.text.slice(2)}
             </div>
           ))}
         </div>
-        <div className="shrink-0 flex gap-1 text-white/50 pt-0.5">
-          <span className="text-green-400/70">❯</span>
+        <div className="shrink-0 flex gap-1 text-white/50 pt-0.5 overflow-hidden">
+          <span className="text-green-400/70 shrink-0">❯</span>
           <span className="truncate">{currentCmd}</span>
-          <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-amber-400`}>▋</span>
+          <span className={`shrink-0 ${showCursor ? "opacity-100" : "opacity-0"} text-amber-400`}>▋</span>
         </div>
       </div>
     </div>
@@ -145,7 +145,7 @@ export function HeroSection() {
             transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
             className="pointer-events-none hidden self-center lg:block"
           >
-            <div className="rounded-xl border border-white/[0.06] bg-[#0c0c14]/80 p-3 shadow-2xl backdrop-blur-sm">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-[#0c0c14]/80 p-3 shadow-2xl backdrop-blur-sm">
               <div className="mb-2 flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-red-500/60" />
                 <span className="h-2 w-2 rounded-full bg-yellow-500/60" />

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/components/cv/language";
+import { cleanHedText } from "@/lib/hed/text";
 
 type Turn = { role: "user" | "model"; text: string; signature?: string };
 
@@ -83,7 +84,7 @@ export function Hed({ children }: { children: React.ReactNode }) {
   }, [draft, shown, lang]);
 
   async function send(text: string) {
-    const clean = text.replace(/\s+/g, " ").trim();
+    const clean = cleanHedText(text);
     if (!clean || busy.current) return;
     const ticket = generation.current;
     busy.current = true;
@@ -197,14 +198,7 @@ export function Hed({ children }: { children: React.ReactNode }) {
                 placeholder={t.hedPlaceholder}
                 aria-label={t.hedPlaceholder}
                 disabled={pending}
-                enterKeyHint="send"
                 onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-                    event.preventDefault();
-                    send(draft);
-                  }
-                }}
               />
               <button type="submit" disabled={pending}>{t.hedSend}</button>
             </form>

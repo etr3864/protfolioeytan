@@ -1073,6 +1073,8 @@ html:has(.lang-shift) { overflow: hidden; }
   width: fit-content;
   max-width: 88%;
   padding: 12px 14px;
+  white-space: pre-wrap;
+  unicode-bidi: plaintext;
 }
 .hed-log .mine {
   margin-left: auto;

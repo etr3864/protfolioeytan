@@ -1,4 +1,5 @@
 import { hedSystem } from "@/lib/hed/prompt";
+import { cleanHedText } from "@/lib/hed/text";
 
 export const runtime = "nodejs";
 
@@ -37,7 +38,7 @@ function readTurns(value: unknown): Turn[] | null {
     const text = (item as { text?: unknown }).text;
     const signature = (item as { signature?: unknown }).signature;
     if ((role !== "user" && role !== "model") || typeof text !== "string") return null;
-    const clean = text.replace(/\s+/g, " ").trim();
+    const clean = cleanHedText(text);
     if (!clean || clean.length > MAX_CHARS) return null;
     if (signature !== undefined && (role !== "model" || typeof signature !== "string" || signature.length > 8000)) return null;
     turns.push(signature ? { role, text: clean, signature } : { role, text: clean });

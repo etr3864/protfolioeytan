@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Hed } from "@/components/hed/Hed";
 import { DevMark } from "./DevMark";
 import { Intro } from "./Intro";
@@ -222,6 +223,66 @@ function Experience() {
   const { t } = useLang();
   const [open, setOpen] = useState<number | null>(null);
   const [hot, setHot] = useState<number | null>(null);
+  const glide = useRef(0);
+
+  useEffect(() => {
+    const stop = () => cancelAnimationFrame(glide.current);
+    window.addEventListener("wheel", stop, { passive: true });
+    window.addEventListener("touchstart", stop, { passive: true });
+    return () => {
+      stop();
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchstart", stop);
+    };
+  }, []);
+
+  const toggle = (card: HTMLElement, index: number) => {
+    const opening = open !== index;
+    setOpen(opening ? index : null);
+    if (!opening) return;
+    cancelAnimationFrame(glide.current);
+    const section = card.closest("section");
+    const inner = section?.querySelector<HTMLElement>("[data-pin-inner]");
+    const root = section?.parentElement;
+    const detail = card.querySelector<HTMLElement>(".exp-detail");
+    if (!section || !inner || !root || !detail) return;
+
+    let natural = root.getBoundingClientRect().top + window.scrollY;
+    for (let node = root.firstElementChild; node && node !== section; node = node.nextElementSibling) {
+      const position = getComputedStyle(node).position;
+      if (position !== "fixed" && position !== "absolute") natural += (node as HTMLElement).offsetHeight;
+    }
+
+    let closing = 0;
+    let closingAbove = 0;
+    inner.querySelectorAll<HTMLElement>('.exp-card[data-open="1"]').forEach((other) => {
+      if (other === card) return;
+      const height = other.querySelector<HTMLElement>(".exp-fold-in")?.offsetHeight ?? 0;
+      closing += height;
+      if (other.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING) closingAbove += height;
+    });
+
+    const gap = window.matchMedia("(max-width: 900px)").matches ? 16 : 96;
+    const offset = card.getBoundingClientRect().top - inner.getBoundingClientRect().top - closingAbove;
+    const finalHeight = inner.offsetHeight + detail.offsetHeight - closing;
+    const target = Math.min(natural + offset - gap, natural + Math.max(0, finalHeight - window.innerHeight));
+    const from = window.scrollY;
+    if (Math.abs(target - from) < 2) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo({ top: target, behavior: "instant" });
+      return;
+    }
+    let began = -1;
+    const step = (now: number) => {
+      if (began < 0) began = now;
+      const progress = Math.min(1, (now - began) / 700);
+      const eased = 1 - (1 - progress) ** 3;
+      window.scrollTo({ top: from + (target - from) * eased, behavior: "instant" });
+      if (progress < 1) glide.current = requestAnimationFrame(step);
+    };
+    glide.current = requestAnimationFrame(step);
+  };
 
   return (
     <section id="experience" data-pin="1">
@@ -253,12 +314,12 @@ function Experience() {
                   }}
                   onClick={(event) => {
                     if ((event.target as HTMLElement).closest("a")) return;
-                    setOpen(on ? null : index);
+                    toggle(event.currentTarget, index);
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
-                      setOpen(on ? null : index);
+                      toggle(event.currentTarget, index);
                     }
                   }}
                   role="button"
@@ -300,11 +361,11 @@ function Experience() {
                     <div className="exp-fold-in">
                       <div className="exp-detail">
                         <span />
-                        <div>
-                          <p className="summary">{job.summary}</p>
+                        <div data-exp-words="1">
+                          <p className="summary"><Fill text={job.summary} /></p>
                           <ul className="points">
                             {job.points.map((point) => (
-                              <li key={point}>{point}</li>
+                              <li key={point}><span><Fill text={point} /></span></li>
                             ))}
                           </ul>
                         </div>
@@ -322,9 +383,180 @@ function Experience() {
   );
 }
 
+function ShotView({
+  shots,
+  name,
+  index,
+  rtl,
+  closeLabel,
+  onIndex,
+  onClose,
+}: {
+  shots: string[];
+  name: string;
+  index: number;
+  rtl: boolean;
+  closeLabel: string;
+  onIndex: (index: number) => void;
+  onClose: () => void;
+}) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const indexRef = useRef(index);
+  const many = shots.length > 1;
+
+  useEffect(() => {
+    indexRef.current = index;
+  }, [index]);
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (!many) return;
+      const forward = rtl ? "ArrowLeft" : "ArrowRight";
+      const back = rtl ? "ArrowRight" : "ArrowLeft";
+      if (event.key === forward) onIndex(Math.min(shots.length - 1, indexRef.current + 1));
+      if (event.key === back) onIndex(Math.max(0, indexRef.current - 1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [many, onClose, onIndex, rtl, shots.length]);
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    const strip = stripRef.current;
+    if (!frame || !strip) return;
+    const apply = () => {
+      const width = frame.clientWidth;
+      if (!width) return;
+      strip.style.transition = strip.dataset.ready ? "transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1)" : "none";
+      strip.dataset.ready = "1";
+      strip.style.transform = `translateX(${(rtl ? 1 : -1) * index * width}px)`;
+    };
+    apply();
+    const frameId = requestAnimationFrame(apply);
+    return () => cancelAnimationFrame(frameId);
+  }, [index, rtl, shots.length]);
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    const strip = stripRef.current;
+    if (!frame || !strip || !many) return;
+    let dragging = false;
+    let axis: "" | "x" | "y" = "";
+    let startX = 0;
+    let startY = 0;
+    let origin = 0;
+    const down = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") return;
+      if ((event.target as HTMLElement).closest(".shot-nav")) return;
+      dragging = true;
+      axis = "";
+      startX = event.clientX;
+      startY = event.clientY;
+      origin = indexRef.current;
+      strip.style.transition = "none";
+    };
+    const move = (event: PointerEvent) => {
+      if (!dragging) return;
+      const dx = event.clientX - startX;
+      const travelY = event.clientY - startY;
+      if (!axis) {
+        if (Math.abs(dx) < 8 && Math.abs(travelY) < 8) return;
+        axis = Math.abs(dx) > Math.abs(travelY) ? "x" : "y";
+        if (axis === "y") {
+          dragging = false;
+          return;
+        }
+      }
+      if (axis !== "x") return;
+      event.preventDefault();
+      const width = frame.clientWidth || 1;
+      const ahead = rtl ? dx : -dx;
+      const atStart = origin <= 0 && ahead < 0;
+      const atEnd = origin >= shots.length - 1 && ahead > 0;
+      const drag = atStart || atEnd ? dx * 0.35 : dx;
+      strip.style.transform = `translateX(${(rtl ? 1 : -1) * origin * width + drag}px)`;
+    };
+    const up = (event: PointerEvent) => {
+      if (!dragging && axis !== "x") {
+        dragging = false;
+        axis = "";
+        return;
+      }
+      const moved = axis === "x";
+      dragging = false;
+      axis = "";
+      if (!moved) return;
+      const width = frame.clientWidth || 1;
+      const ahead = rtl ? event.clientX - startX : startX - event.clientX;
+      let next = origin;
+      if (ahead > width * 0.18) next = origin + 1;
+      else if (ahead < -width * 0.18) next = origin - 1;
+      next = Math.min(shots.length - 1, Math.max(0, next));
+      strip.style.transition = "transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1)";
+      strip.style.transform = `translateX(${(rtl ? 1 : -1) * next * width}px)`;
+      onIndex(next);
+    };
+    frame.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move, { passive: false });
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      frame.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, [many, onIndex, rtl, shots.length]);
+
+  const step = (dir: number) => onIndex(Math.min(shots.length - 1, Math.max(0, index + dir)));
+
+  return (
+    <div className="shot-view" role="dialog" aria-modal="true" aria-label={name} dir={rtl ? "rtl" : "ltr"}>
+      <div className="shot-view-bar">
+        <div>
+          <b>{name}</b>
+          {many ? <span><bdi dir="ltr">{String(index + 1).padStart(2, "0")} / {String(shots.length).padStart(2, "0")}</bdi></span> : null}
+        </div>
+        <button type="button" className="shot-view-x" aria-label={closeLabel} onClick={onClose} />
+      </div>
+      <div className="shot-view-frame" ref={frameRef}>
+        <div className="shot-view-strip" ref={stripRef}>
+          {shots.map((src) => (
+            <img key={src} src={src} alt="" />
+          ))}
+        </div>
+        {many ? (
+          <>
+            <button type="button" className="shot-nav shot-prev" data-off={index === 0 ? "1" : "0"} aria-label={rtl ? "הקודם" : "Previous"} onClick={() => step(-1)}>
+              <i className="go" />
+            </button>
+            <button type="button" className="shot-nav shot-next" data-off={index === shots.length - 1 ? "1" : "0"} aria-label={rtl ? "הבא" : "Next"} onClick={() => step(1)}>
+              <i className="go" />
+            </button>
+          </>
+        ) : null}
+      </div>
+      {many ? (
+        <div className="shot-view-dots">
+          {shots.map((src, shotIndex) => (
+            <button key={src} type="button" data-on={shotIndex === index ? "1" : "0"} aria-label={`${name} ${shotIndex + 1}`} onClick={() => onIndex(shotIndex)} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 function Projects() {
   const { t } = useLang();
   const [shot, setShot] = useState<number[]>(() => t.projects.map(() => 0));
+  const [zoom, setZoom] = useState<{ project: number; shot: number } | null>(null);
   const total = String(t.projects.length).padStart(2, "0");
 
   return (
@@ -355,33 +587,36 @@ function Projects() {
                     {project.shots.map((src, shotIndex) => (
                       <img key={src} src={src} alt={shotIndex === active ? project.name : ""} style={{ opacity: shotIndex === active ? 1 : 0, transform: `scale(${shotIndex === active ? 1 : 1.06})` }} />
                     ))}
+                    <button type="button" className="shot-zoom" aria-label={t.enlarge} onClick={() => setZoom({ project: index, shot: active })}>
+                      <span>{t.enlarge}</span>
+                    </button>
                   </div>
                   <span className="shot-no">{String(index + 1).padStart(2, "0")}</span>
                   {project.shots.length > 1 ? (
                     <div className="thumbs">
                       {project.shots.map((src, shotIndex) => (
-                        <button key={src} type="button" data-on={shotIndex === active ? "1" : "0"} onClick={() => setShot((current) => current.map((value, i) => (i === index ? shotIndex : value)))} onMouseEnter={() => setShot((current) => current.map((value, i) => (i === index ? shotIndex : value)))}>
+                        <button key={src} type="button" data-on={shotIndex === active ? "1" : "0"} aria-label={`${project.name} ${shotIndex + 1}`} onClick={() => setShot((current) => current.map((value, i) => (i === index ? shotIndex : value)))} onMouseEnter={() => setShot((current) => current.map((value, i) => (i === index ? shotIndex : value)))}>
                           <img src={src} alt="" />
                         </button>
                       ))}
                     </div>
                   ) : null}
                 </div>
-                <div className="project-copy">
+                <div className="project-copy" data-project-words="1">
                   <div className="meta">
                     <span>{project.kind}</span>
                     <span>·</span>
                     <span>{project.year}</span>
                   </div>
                   <h3>{project.name}</h3>
-                  <p className="desc">{project.desc}</p>
+                  <p className="desc"><Fill text={project.desc} /></p>
                   <div>
                     <div className="block-label">{t.highlightsLabel}</div>
                     <ul className="highlights">
                       {project.highlights.map((item) => (
                         <li key={item}>
                           <i />
-                          <span>{item}</span>
+                          <span><Fill text={item} /></span>
                         </li>
                       ))}
                     </ul>
@@ -389,17 +624,17 @@ function Projects() {
                   <div className="pair">
                     <div>
                       <span className="block-label">{t.strategyLabel}</span>
-                      <span>{project.strategy}</span>
+                      <span><Fill text={project.strategy} /></span>
                     </div>
                     <div>
                       <span className="block-label">{t.modelLabel}</span>
-                      <span>{project.model}</span>
+                      <span><Fill text={project.model} /></span>
                     </div>
                   </div>
                   {project.lesson ? (
                     <div className="lesson">
                       <span className="block-label">{t.lessonLabel}</span>
-                      <span>{project.lesson}</span>
+                      <span><Fill text={project.lesson} /></span>
                     </div>
                   ) : null}
                   <div>
@@ -426,14 +661,31 @@ function Projects() {
           })}
         </div>
       </div>
+      {zoom && typeof document !== "undefined"
+        ? createPortal(
+            <ShotView
+              shots={t.projects[zoom.project]?.shots ?? []}
+              name={t.projects[zoom.project]?.name ?? ""}
+              index={zoom.shot}
+              rtl={t.dir === "rtl"}
+              closeLabel={t.dir === "rtl" ? "סגירה" : "Close"}
+              onIndex={(shotIndex) => {
+                setShot((current) => current.map((value, i) => (i === zoom.project ? shotIndex : value)));
+                setZoom({ project: zoom.project, shot: shotIndex });
+              }}
+              onClose={() => setZoom(null)}
+            />,
+            document.body,
+          )
+        : null}
     </section>
   );
 }
 
+
 function Education() {
   const { t } = useLang();
   const [cert, setCert] = useState<string | null>(null);
-  const total = String(t.education.length).padStart(2, "0");
 
   return (
     <section id="education" data-pin="1">
@@ -442,7 +694,6 @@ function Education() {
           <div>
             <div className="section-head">
               <h2>{t.eduLabel}</h2>
-              <span>({total})</span>
             </div>
             <div className="edu-list">
               {t.education.map((item, index) => (
@@ -509,7 +760,8 @@ function Contact() {
       <div className="contact-sheet" data-pin-inner="1">
         <div className="contact-photo" data-par-y="1">
           <div>
-            <img src="/media/eytan-pencil.webp" alt="" />
+            <img className="pencil" src="/media/eytan-pencil.webp" alt="" />
+            <img className="contact-illu" src="/media/eytan-illustration.webp" alt="" />
           </div>
         </div>
         <h2 className="contact-title" data-chars="1">

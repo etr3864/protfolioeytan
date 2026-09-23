@@ -22,6 +22,23 @@ export function useStackMotion(lang: Locale) {
     const between = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
     const enter = (el: Element) => clamp(1 - el.getBoundingClientRect().top / window.innerHeight);
     const narrow = () => window.matchMedia(narrowQuery).matches;
+    let sizedCard = -1;
+    let clearedWords = false;
+
+    const paintProjectWords = (viewHeight: number, card: HTMLElement | undefined) => {
+      if (!card) return;
+      clearedWords = true;
+      const words = card.querySelectorAll<HTMLElement>("[data-w]");
+      const copy = card.querySelector<HTMLElement>("[data-project-words]");
+      if (!copy || !words.length) return;
+      const rect = copy.getBoundingClientRect();
+      const progress = clamp((viewHeight * 0.72 - rect.top) / Math.max(1, rect.height * 0.92));
+      const count = words.length;
+      words.forEach((word, wordIndex) => {
+        const on = wordIndex / count < progress ? "1" : "0.18";
+        if (word.style.opacity !== on) word.style.opacity = on;
+      });
+    };
 
     const tick = () => {
       raf = 0;
@@ -74,6 +91,32 @@ export function useStackMotion(lang: Locale) {
         const words = block.querySelectorAll<HTMLElement>("[data-w]");
         words.forEach((word, index) => {
           word.style.opacity = index / words.length < progress ? "1" : "0.18";
+        });
+      });
+
+      const expInner = document.querySelector<HTMLElement>("#experience [data-pin-inner]");
+      let growth = 0;
+      document.querySelectorAll<HTMLElement>(".exp-card").forEach((card) => {
+        const fold = card.querySelector<HTMLElement>(".exp-fold-in");
+        const detail = card.querySelector<HTMLElement>(".exp-detail");
+        if (!fold || !detail) return;
+        growth += (card.dataset.open === "1" ? detail.offsetHeight : 0) - fold.offsetHeight;
+      });
+      const below = expInner ? Math.max(0, expInner.getBoundingClientRect().bottom + growth - vh) : 0;
+      const line = vh - Math.min(below, vh * 0.3);
+      document.querySelectorAll<HTMLElement>("[data-exp-words]").forEach((block) => {
+        const words = block.querySelectorAll<HTMLElement>("[data-w]");
+        if (!block.closest('.exp-card[data-open="1"]')) {
+          words.forEach((word) => {
+            if (word.style.opacity) word.style.opacity = "";
+          });
+          return;
+        }
+        const rect = block.getBoundingClientRect();
+        const progress = clamp((line - rect.top) / Math.max(1, rect.height));
+        words.forEach((word, index) => {
+          const on = index / words.length < progress ? "1" : "0.18";
+          if (word.style.opacity !== on) word.style.opacity = on;
         });
       });
 
@@ -133,20 +176,45 @@ export function useStackMotion(lang: Locale) {
       const track = document.querySelector<HTMLElement>("[data-track]");
       if (scroller && track) {
         distance = Math.max(0, track.scrollWidth - window.innerWidth);
-        scroller.style.height = `${vh * 1.2 + distance}px`;
-        const rect = scroller.getBoundingClientRect();
-        const progress = clamp(-rect.top / Math.max(1, distance));
-        if (!dragging) {
-          target = narrow() ? between(progress * distance + manual, 0, distance) : progress * distance;
-        }
-        if (!narrow()) manual = 0;
-        const shown = narrow() && distance ? clamp(target / distance) : progress;
         const frame = scroller.querySelector<HTMLElement>("[data-hs-frame]");
-        const reveal = enter(scroller);
-        if (frame) {
-          const insetY = (1 - reveal) * 8;
-          const insetX = (1 - reveal) * 6;
-          frame.style.clipPath = reveal >= 1 ? "none" : `inset(${insetY}% ${insetX}% 0 ${insetX}% round 28px)`;
+        let shown = 0;
+        if (narrow()) {
+          if (scroller.style.height) scroller.style.height = "";
+          if (!dragging) target = between(manual, 0, distance);
+          if (frame) frame.style.clipPath = "none";
+          shown = distance ? clamp(target / distance) : 0;
+          const cards = [...track.querySelectorAll<HTMLElement>("[data-card]")];
+          const step = Math.max(1, (cards[0]?.offsetWidth ?? 1) + 14);
+          const index = Math.min(Math.max(cards.length - 1, 0), Math.max(0, Math.round(target / step)));
+          if (index !== sizedCard) {
+            if (sizedCard >= 0) {
+              cards[sizedCard]?.querySelectorAll<HTMLElement>("[data-w]").forEach((word) => {
+                word.style.opacity = "";
+              });
+            }
+            sizedCard = index;
+          }
+          paintProjectWords(vh, cards[index]);
+        } else {
+          manual = 0;
+          sizedCard = -1;
+          scroller.style.height = `${vh * 1.2 + distance}px`;
+          const rect = scroller.getBoundingClientRect();
+          const progress = clamp(-rect.top / Math.max(1, distance));
+          if (!dragging) target = progress * distance;
+          shown = progress;
+          const reveal = enter(scroller);
+          if (frame) {
+            const insetY = (1 - reveal) * 8;
+            const insetX = (1 - reveal) * 6;
+            frame.style.clipPath = reveal >= 1 ? "none" : `inset(${insetY}% ${insetX}% 0 ${insetX}% round 28px)`;
+          }
+          if (clearedWords) {
+            scroller.querySelectorAll<HTMLElement>(".project-copy [data-w]").forEach((word) => {
+              word.style.opacity = "";
+            });
+            clearedWords = false;
+          }
         }
         const bar = scroller.querySelector<HTMLElement>("[data-hs-bar]");
         if (bar) bar.style.transform = `scaleX(${shown})`;
@@ -166,7 +234,7 @@ export function useStackMotion(lang: Locale) {
           const sectionTop = section?.getBoundingClientRect().top ?? 0;
           const resting = block.getBoundingClientRect().top - sectionTop;
           const from = vh * 0.92;
-          const to = Math.min(resting, vh * 0.55);
+          const to = Math.min(resting, vh * 0.8);
           progress = clamp((from - block.getBoundingClientRect().top) / Math.max(1, from - to));
         } else {
           progress = clamp((vh - block.getBoundingClientRect().top) / (vh * 0.7));
@@ -206,13 +274,14 @@ export function useStackMotion(lang: Locale) {
         loop = 0;
         return;
       }
-      current += (target - current) * 0.085;
+      current += (target - current) * (narrow() ? 0.34 : 0.085);
       const delta = target - current;
       const limit = narrow() ? 2.2 : 5;
-      const skew = dragging ? 0 : Math.max(-limit, Math.min(limit, delta * (narrow() ? 0.006 : 0.012)));
+      const skew = narrow() || dragging ? 0 : Math.max(-limit, Math.min(limit, delta * 0.012));
       track.style.transform = `translateX(${(rtl ? 1 : -1) * current}px)`;
       track.querySelectorAll<HTMLElement>("[data-card]").forEach((card) => {
         card.style.transform = `skewX(${(rtl ? 1 : -1) * skew}deg)`;
+        if (narrow()) return;
         const image = card.querySelector<HTMLElement>("[data-par]");
         if (!image) return;
         const rect = card.getBoundingClientRect();
@@ -232,10 +301,6 @@ export function useStackMotion(lang: Locale) {
       const count = scroller.querySelector<HTMLElement>("[data-hs-count]");
       const total = trackEl.children.length;
       if (count && total) count.textContent = String(Math.min(total, Math.round(shown * (total - 1)) + 1)).padStart(2, "0");
-    };
-    const pageProgress = () => {
-      const scroller = trackEl?.closest<HTMLElement>("[data-hs]");
-      return clamp(-(scroller?.getBoundingClientRect().top ?? 0) / Math.max(1, distance));
     };
     const stopPointer = () => {
       window.removeEventListener("pointermove", onPointerMove);
@@ -271,9 +336,9 @@ export function useStackMotion(lang: Locale) {
       const next = between(dragOrigin - dx, 0, distance);
       current = next;
       target = next;
-      manual = next - pageProgress() * distance;
+      manual = next;
+      trackEl.style.transform = `translateX(${(rtl ? 1 : -1) * next}px)`;
       paintMeter();
-      if (!loop) animate();
     };
     const onPointerUp = () => {
       stopPointer();
@@ -291,9 +356,8 @@ export function useStackMotion(lang: Locale) {
       const gap = Number.parseFloat(getComputedStyle(trackEl).columnGap || getComputedStyle(trackEl).gap) || 0;
       const step = Math.max(1, (card?.offsetWidth ?? 1) + gap);
       const snapped = between(Math.round(current / step) * step, 0, distance);
-      const progress = pageProgress();
       target = snapped;
-      manual = snapped - progress * distance;
+      manual = snapped;
       paintMeter();
       if (!loop) animate();
     };
@@ -310,12 +374,29 @@ export function useStackMotion(lang: Locale) {
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
+    let pulse = 0;
+    const onExpToggle = (event: Event) => {
+      if (!(event.target as HTMLElement | null)?.closest?.(".exp-card")) return;
+      const until = performance.now() + 900;
+      cancelAnimationFrame(pulse);
+      const step = () => {
+        tick();
+        pulse = performance.now() < until ? requestAnimationFrame(step) : 0;
+      };
+      pulse = requestAnimationFrame(step);
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    document.addEventListener("click", onExpToggle);
+    document.addEventListener("keydown", onExpToggle);
     const start = window.setTimeout(tick, 80);
 
     return () => {
       window.clearTimeout(start);
+      cancelAnimationFrame(pulse);
+      document.removeEventListener("click", onExpToggle);
+      document.removeEventListener("keydown", onExpToggle);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);

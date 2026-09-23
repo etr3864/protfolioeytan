@@ -164,10 +164,17 @@ function Hero() {
   );
 }
 
-function Rich({ text }: { text: string }) {
-  const parts = text.split(/(\b(?:AI|CTO|Python|JS)\b)/g);
-  if (parts.length === 1) return text;
-  return parts.map((part, index) => (part === "AI" || part === "CTO" || part === "Python" || part === "JS" ? <bdi key={`${part}-${index}`}>{part}</bdi> : part));
+function Fill({ text }: { text: string }) {
+  const parts = text.split(/(\s+|\b(?:AI|CTO|Python|JS)\b)/g);
+  return parts.map((part, index) => {
+    if (!part || /^\s+$/.test(part)) return part;
+    const body = /^(AI|CTO|Python|JS)$/.test(part) ? <bdi>{part}</bdi> : part;
+    return (
+      <span key={`${part}-${index}`} data-w="1">
+        {body}
+      </span>
+    );
+  });
 }
 
 function Words({ text }: { text: string }) {
@@ -197,10 +204,10 @@ function About() {
         <div className="about-grid">
           <div className="about-copy">
             <Words text={t.statement} />
-            <div className="about-prose">
-              <p className="about-lead"><Rich text={t.aboutLead} /></p>
+            <div className="about-prose" data-words="rest">
+              <p className="about-lead"><Fill text={t.aboutLead} /></p>
               {t.aboutBody.map((paragraph) => (
-                <p key={paragraph}><Rich text={paragraph} /></p>
+                <p key={paragraph}><Fill text={paragraph} /></p>
               ))}
             </div>
           </div>
@@ -215,7 +222,6 @@ function Experience() {
   const { t } = useLang();
   const [open, setOpen] = useState<number | null>(null);
   const [hot, setHot] = useState<number | null>(null);
-  const total = String(t.experience.length).padStart(2, "0");
 
   return (
     <section id="experience" data-pin="1">
@@ -223,7 +229,6 @@ function Experience() {
         <div className="exp-panel" data-circle="1">
           <div className="section-head">
             <h2>{t.expLabel}</h2>
-            <span>({total})</span>
           </div>
           <div className="exp-list">
             {t.experience.map((job, index) => {
@@ -495,7 +500,7 @@ function Education() {
 }
 
 function Contact() {
-  const { t } = useLang();
+  const { t, lang, beginShift, pending } = useLang();
   return (
     <section id="contact" data-pin="1">
       <div className="contact-sheet" data-pin-inner="1">
@@ -505,9 +510,13 @@ function Contact() {
           </div>
         </div>
         <h2 className="contact-title" data-chars="1">
-          {t.contactTitle.split("").map((char, index) => (
-            <span key={`${char}-${index}`}>
-              <i data-ch="1">{char}</i>
+          {t.contactTitle.split(" ").map((word, wordIndex) => (
+            <span className="contact-word" key={`${word}-${wordIndex}`}>
+              {[...word].map((char, index) => (
+                <span key={`${char}-${index}`}>
+                  <i data-ch="1">{char}</i>
+                </span>
+              ))}
             </span>
           ))}
         </h2>
@@ -521,6 +530,12 @@ function Contact() {
           ))}
         </div>
         <footer className="foot">
+          <div className="foot-tools">
+            <button type="button" className="lang-btn" disabled={Boolean(pending)} onClick={() => beginShift(lang === "he" ? "en" : "he")}>
+              {lang === "he" ? "English" : "עברית"}
+            </button>
+            <PdfButton />
+          </div>
           <span>{t.credit}</span>
           <span>{t.location}</span>
         </footer>

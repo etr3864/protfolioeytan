@@ -7,7 +7,7 @@ const MAX_CHARS = 1200;
 const LIMIT = 20;
 const WINDOW_MS = 10 * 60 * 1000;
 
-type Turn = { role: "user" | "model"; text: string };
+type Turn = { role: "user" | "model"; text: string; signature?: string };
 
 const buckets: Map<string, number[]> = ((globalThis as { __hedBuckets?: Map<string, number[]> }).__hedBuckets ??= new Map());
 
@@ -35,24 +35,28 @@ function readTurns(value: unknown): Turn[] | null {
     if (!item || typeof item !== "object") return null;
     const role = (item as { role?: unknown }).role;
     const text = (item as { text?: unknown }).text;
+    const signature = (item as { signature?: unknown }).signature;
     if ((role !== "user" && role !== "model") || typeof text !== "string") return null;
     const clean = text.replace(/\s+/g, " ").trim();
     if (!clean || clean.length > MAX_CHARS) return null;
-    turns.push({ role, text: clean });
+    if (signature !== undefined && (role !== "model" || typeof signature !== "string" || signature.length > 8000)) return null;
+    turns.push(signature ? { role, text: clean, signature } : { role, text: clean });
   }
   if (turns[turns.length - 1]?.role !== "user") return null;
   if (turns[0]?.role !== "user") return null;
   return turns;
 }
 
-function replyText(payload: unknown) {
-  const parts = (payload as { candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[] })?.candidates?.[0]?.content?.parts;
-  if (!parts) return "";
-  return parts
+function replyFrom(payload: unknown) {
+  const parts = (payload as { candidates?: { content?: { parts?: { text?: string; thought?: boolean; thoughtSignature?: string }[] } }[] })?.candidates?.[0]?.content?.parts;
+  if (!parts) return { text: "" };
+  const text = parts
     .filter((part) => part.text && !part.thought)
     .map((part) => part.text)
     .join("")
     .trim();
+  const signature = [...parts].reverse().find((part) => part.thoughtSignature)?.thoughtSignature;
+  return signature ? { text, signature } : { text };
 }
 
 export async function POST(request: Request) {
@@ -74,14 +78,14 @@ export async function POST(request: Request) {
   const result = await ask(key, locale, messages);
   if (result.kind === "rate") return Response.json({ error: "rate" }, { status: 429 });
   if (result.kind === "empty") return Response.json({ error: "empty" }, { status: 502 });
-  return Response.json({ text: result.text });
+  return Response.json(result.signature ? { text: result.text, signature: result.signature } : { text: result.text });
 }
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function ask(key: string, locale: "he" | "en", messages: Turn[]): Promise<{ kind: "text"; text: string } | { kind: "rate" } | { kind: "empty" }> {
+async function ask(key: string, locale: "he" | "en", messages: Turn[]): Promise<{ kind: "text"; text: string; signature?: string } | { kind: "rate" } | { kind: "empty" }> {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     let upstream: Response;
     try {
@@ -93,7 +97,10 @@ async function ask(key: string, locale: "he" | "en", messages: Turn[]): Promise<
         },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: hedSystem(locale) }] },
-          contents: messages.map((turn) => ({ role: turn.role, parts: [{ text: turn.text }] })),
+          contents: messages.map((turn) => ({
+            role: turn.role,
+            parts: [turn.signature ? { text: turn.text, thoughtSignature: turn.signature } : { text: turn.text }],
+          })),
           generationConfig: {
             thinkingConfig: { thinkingLevel: "low" },
             maxOutputTokens: 1024,
@@ -104,14 +111,22 @@ async function ask(key: string, locale: "he" | "en", messages: Turn[]): Promise<
       await sleep(400);
       continue;
     }
-    if (upstream.status === 429) return { kind: "rate" };
+    if (upstream.status === 429) {
+      const detail = (await upstream.text()).replace(/AIza[\w-]+/g, "[redacted]").slice(0, 500);
+      console.error("hed upstream", 429, detail);
+      return { kind: "rate" };
+    }
     if (upstream.status >= 500) {
       await sleep(400);
       continue;
     }
-    if (!upstream.ok) return { kind: "empty" };
-    const text = replyText(await upstream.json());
-    if (text) return { kind: "text", text };
+    if (!upstream.ok) {
+      const detail = (await upstream.text()).replace(/AIza[\w-]+/g, "[redacted]").slice(0, 400);
+      console.error("hed upstream", upstream.status, detail);
+      return { kind: "empty" };
+    }
+    const reply = replyFrom(await upstream.json());
+    if (reply.text) return { kind: "text", ...reply };
     return { kind: "empty" };
   }
   return { kind: "empty" };

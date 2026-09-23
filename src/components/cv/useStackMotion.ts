@@ -24,7 +24,6 @@ export function useStackMotion(lang: Locale) {
 
     const tick = () => {
       raf = 0;
-      if (narrow()) return;
       const y = window.scrollY;
       const vh = window.innerHeight;
       const layers = [...document.querySelectorAll<HTMLElement>("[data-pin], [data-hs]")];
@@ -50,7 +49,15 @@ export function useStackMotion(lang: Locale) {
         copy.style.opacity = String(1 - (travel / vh) * 1.4);
       }
 
+      const mobile = narrow();
+      if (!mobile) {
+        document.querySelectorAll<HTMLElement>(".about-prose [data-w]").forEach((word) => {
+          word.style.opacity = "";
+        });
+      }
       document.querySelectorAll<HTMLElement>("[data-words]").forEach((block) => {
+        if (block.dataset.words === "rest") return;
+        if (mobile && block.closest(".about-copy")) return;
         const rect = block.getBoundingClientRect();
         const progress = clamp((vh * 0.85 - rect.top) / (rect.height + vh * 0.25));
         const words = block.querySelectorAll<HTMLElement>("[data-w]");
@@ -58,6 +65,26 @@ export function useStackMotion(lang: Locale) {
           word.style.opacity = index / words.length < progress ? "1" : "0.18";
         });
       });
+
+      if (mobile) {
+        const copy = document.querySelector<HTMLElement>(".about-copy");
+        const about = document.getElementById("about");
+        const inner = about?.querySelector<HTMLElement>("[data-pin-inner]");
+        if (copy && about && inner) {
+          let layout = 0;
+          let node: HTMLElement | null = about;
+          while (node) {
+            layout += node.offsetTop;
+            node = node.offsetParent as HTMLElement | null;
+          }
+          const travel = Math.max(1, inner.offsetHeight - vh);
+          const progress = clamp((y - layout) / travel);
+          const words = [...copy.querySelectorAll<HTMLElement>("[data-w]")];
+          words.forEach((word, index) => {
+            word.style.opacity = index / words.length < progress ? "1" : "0.18";
+          });
+        }
+      }
 
       document.querySelectorAll<HTMLElement>("[data-par-y]").forEach((el) => {
         const parent = el.parentElement;
@@ -109,10 +136,24 @@ export function useStackMotion(lang: Locale) {
       }
 
       document.querySelectorAll<HTMLElement>("[data-chars]").forEach((block) => {
-        const progress = clamp((vh - block.getBoundingClientRect().top) / (vh * 0.7));
-        const chars = block.querySelectorAll<HTMLElement>("[data-ch]");
+        const chars = [...block.querySelectorAll<HTMLElement>("[data-ch]")];
+        let progress: number;
+        if (narrow()) {
+          const section = block.closest("section");
+          const sectionTop = section?.getBoundingClientRect().top ?? 0;
+          const resting = block.getBoundingClientRect().top - sectionTop;
+          const from = vh * 0.92;
+          const to = Math.min(resting, vh * 0.55);
+          progress = clamp((from - block.getBoundingClientRect().top) / Math.max(1, from - to));
+        } else {
+          progress = clamp((vh - block.getBoundingClientRect().top) / (vh * 0.7));
+        }
         chars.forEach((char, index) => {
-          const local = clamp(progress * 1.7 - (index / chars.length) * 0.7);
+          const local = clamp(progress * 1.7 - (index / Math.max(1, chars.length)) * 0.7);
+          if (local >= 1) {
+            char.style.transform = "none";
+            return;
+          }
           const tilt = (1 - local) * (rtl ? -8 : 8);
           char.style.transform = `translateY(${(1 - local) * 105}%) rotate(${tilt}deg)`;
         });
@@ -130,13 +171,14 @@ export function useStackMotion(lang: Locale) {
 
     const animate = () => {
       const track = document.querySelector<HTMLElement>("[data-track]");
-      if (!track || narrow()) {
+      if (!track) {
         loop = 0;
         return;
       }
       current += (target - current) * 0.085;
       const delta = target - current;
-      const skew = Math.max(-5, Math.min(5, delta * 0.012));
+      const limit = narrow() ? 2.2 : 5;
+      const skew = Math.max(-limit, Math.min(limit, delta * (narrow() ? 0.006 : 0.012)));
       track.style.transform = `translateX(${(rtl ? 1 : -1) * current}px)`;
       track.querySelectorAll<HTMLElement>("[data-card]").forEach((card) => {
         card.style.transform = `skewX(${(rtl ? 1 : -1) * skew}deg)`;

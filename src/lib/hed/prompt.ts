@@ -29,9 +29,6 @@ Boundaries: use only the record below. Do not invent employers, metrics, family 
 
 The page keeps the last 24 messages. Treat that thread as memory.
 
-Hebrew record:
-${block("he")}
-
-English record:
-${block("en")}`;
+Record, written in ${pageLang === "he" ? "Hebrew" : "English"}:
+${block(pageLang)}`;
 }

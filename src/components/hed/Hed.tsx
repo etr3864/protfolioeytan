@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/components/cv/language";
 
-type Turn = { role: "user" | "model"; text: string };
+type Turn = { role: "user" | "model"; text: string; signature?: string };
 
 const STORAGE = "hed-thread";
 const WINDOW = 24;
@@ -91,14 +91,16 @@ export function Hed({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next, locale: lang }),
       });
-      const payload = (await response.json()) as { text?: string; error?: string };
+      const payload = (await response.json()) as { text?: string; signature?: string; error?: string };
       if (ticket !== generation.current) return;
       if (!response.ok || !payload.text) {
         const note = payload.error === "missing" ? t.hedMissing : payload.error === "rate" ? t.hedBusy : t.hedError;
         setNote(note);
         return;
       }
-      setMessages((current) => [...current, { role: "model" as const, text: payload.text as string }].slice(-WINDOW));
+      const reply: Turn = { role: "model", text: payload.text };
+      if (payload.signature) reply.signature = payload.signature;
+      setMessages((current) => [...current, reply].slice(-WINDOW));
     } catch {
       if (ticket === generation.current) setNote(t.hedError);
     } finally {
@@ -144,10 +146,6 @@ export function Hed({ children }: { children: React.ReactNode }) {
               </span>
             </header>
             <div className="hed-log" ref={logRef}>
-              <p className="agent">
-                <span className="who">{t.hedName}</span>
-                {t.hedGreeting}
-              </p>
               {messages.map((turn, index) => (
                 <p key={`${turn.role}-${index}`} className={turn.role === "user" ? "mine" : "agent"}>
                   {turn.role === "model" ? <span className="who">{t.hedName}</span> : null}

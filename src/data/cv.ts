@@ -82,7 +82,6 @@ export type CvCopy = {
   hedClose: string;
   hedReset: string;
   hedSuggestions: string[];
-  hedGreeting: string;
   hedThinking: string;
   hedError: string;
   hedBusy: string;
@@ -332,7 +331,6 @@ export const cv: Record<Locale, CvCopy> = {
       "איך Optive מרוויחה, ולמה לא לפי דקות?",
       "מה מונע הזיות במכתב של התראה בקליק?",
     ],
-    hedGreeting: "אני שי. אני מכיר את העבודה של איתן. מה תרצה לדעת?",
     hedThinking: "רגע.",
     hedError: "התשובה נעצרה באמצע. אפשר לנסות שוב.",
     hedBusy: "שי עמוס לרגע. אפשר לנסות שוב בעוד דקה.",
@@ -572,7 +570,6 @@ export const cv: Record<Locale, CvCopy> = {
       "How does Optive charge, and why not by the minute?",
       "What stops legal hallucinations in Hatraa BeClick?",
     ],
-    hedGreeting: "I'm Shai. I know Eytan's work. What do you want to know?",
     hedThinking: "One moment.",
     hedError: "That answer stopped halfway. Try again.",
     hedBusy: "Shai is busy for a moment. Try again in a minute.",

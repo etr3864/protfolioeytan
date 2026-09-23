@@ -166,6 +166,28 @@ function Hero() {
 }
 
 function Fill({ text }: { text: string }) {
+  if (/[\u0590-\u05FF]/.test(text)) {
+    const groups: string[] = [];
+    let latin = false;
+    text.split(/[ \t\n]+/).filter(Boolean).forEach((token) => {
+      const isLatin = !/[\u0590-\u05FF]/.test(token) && /[A-Za-z]/.test(token);
+      const last = groups[groups.length - 1];
+      if (isLatin && latin && last && !/[,.:;]$/.test(last)) {
+        groups[groups.length - 1] = `${last} ${token}`;
+      } else {
+        groups.push(token);
+      }
+      latin = isLatin;
+    });
+    return groups.flatMap((group, index) => {
+      const word = (
+        <span key={`${group}-${index}`} data-w="1" className="w-iso">
+          {group}
+        </span>
+      );
+      return index ? [" ", word] : [word];
+    });
+  }
   const parts = text.split(/(\s+|\b(?:AI|CTO|Python|JS)\b)/g);
   return parts.map((part, index) => {
     if (!part || /^\s+$/.test(part)) return part;

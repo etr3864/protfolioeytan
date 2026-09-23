@@ -512,7 +512,8 @@ html:has(.lang-shift) { overflow: hidden; }
   letter-spacing: -0.035em;
   line-height: 1.05;
 }
-.idx { font-size: 13px; font-weight: 600; opacity: 0.6; margin-inline-end: 14px; }
+.idx { font-size: 13px; font-weight: 600; opacity: 0.6; margin-inline-end: 14px; unicode-bidi: isolate; }
+.w-iso { unicode-bidi: isolate; }
 .exp-role p, .exp-time { margin: 0; font-size: 15px; font-weight: 500; }
 .exp-time { font-size: 14px; font-weight: 600; white-space: nowrap; }
 .plus {

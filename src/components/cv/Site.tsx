@@ -454,7 +454,7 @@ function Education() {
                     <div className="note">{item.note}</div>
                     {item.grade ? <span className="grade">{item.grade}</span> : null}
                     <button type="button" className="enlarge" onClick={() => setCert(item.cert)}>
-                      {t.enlarge} <span>↗</span>
+                      {t.enlarge} <span className="go" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="cert">
@@ -525,7 +525,7 @@ function Contact() {
             <a key={item.k} href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
               <small>{item.k}</small>
               <b>{item.v}</b>
-              <em>↗</em>
+              <em className="go" aria-hidden="true" />
             </a>
           ))}
         </div>

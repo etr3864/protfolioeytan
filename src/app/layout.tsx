@@ -16,8 +16,8 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "איתן דוד טורג׳מן",
-  description: "ראש תפעול, מערכות AI ואסטרטגיה עסקית.",
+  title: "Eytan David Turgeman",
+  description: "Head of Operations, AI systems and business strategy.",
   icons: { icon: "/icon.svg" },
   openGraph: {
     title: "Eytan David Turgeman",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="he" className={`${rubik.variable} h-full`}>
+    <html lang="en" dir="ltr" className={`${rubik.variable} h-full`}>
       <body className="min-h-full antialiased">{children}</body>
     </html>
   );

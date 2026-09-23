@@ -28,28 +28,38 @@ export function useStackMotion(lang: Locale) {
       const vh = window.innerHeight;
       const layers = [...document.querySelectorAll<HTMLElement>("[data-pin], [data-hs]")];
 
+      const mobile = narrow();
+
       layers.forEach((layer, index) => {
         if (!layer.hasAttribute("data-pin")) return;
         const inner = layer.querySelector<HTMLElement>("[data-pin-inner]");
         const shade = layer.querySelector<HTMLElement>("[data-pin-shade]");
         if (!inner) return;
-        layer.style.top = `${Math.min(0, vh - inner.offsetHeight)}px`;
+        const pinTop = layer.id === "contact" ? "0px" : `${Math.min(0, vh - inner.offsetHeight)}px`;
+        if (layer.style.top !== pinTop) layer.style.top = pinTop;
         const next = layers[index + 1];
         const progress = next ? enter(next) : 0;
-        inner.style.transform = progress ? `scale(${1 - progress * 0.06})` : "none";
+        inner.style.transform = !mobile && progress ? `scale(${1 - progress * 0.06})` : "none";
         if (shade) shade.style.opacity = String(progress * 0.6);
       });
 
       const photo = document.querySelector<HTMLElement>("[data-hero-photo]");
       const copy = document.querySelector<HTMLElement>("[data-hero-copy]");
       const travel = Math.min(y, vh);
-      if (photo) photo.style.transform = `translateY(${travel * 0.12}px) scale(${1 + (travel / vh) * 0.08})`;
-      if (copy) {
-        copy.style.transform = `translateY(${-travel * 0.25}px)`;
-        copy.style.opacity = String(1 - (travel / vh) * 1.4);
+      if (mobile) {
+        if (photo) photo.style.transform = "none";
+        if (copy) {
+          copy.style.transform = "none";
+          copy.style.opacity = "";
+        }
+      } else {
+        if (photo) photo.style.transform = `translateY(${travel * 0.12}px) scale(${1 + (travel / vh) * 0.08})`;
+        if (copy) {
+          copy.style.transform = `translateY(${-travel * 0.25}px)`;
+          copy.style.opacity = String(1 - (travel / vh) * 1.4);
+        }
       }
 
-      const mobile = narrow();
       if (!mobile) {
         document.querySelectorAll<HTMLElement>(".about-prose [data-w]").forEach((word) => {
           word.style.opacity = "";
@@ -87,6 +97,10 @@ export function useStackMotion(lang: Locale) {
       }
 
       document.querySelectorAll<HTMLElement>("[data-par-y]").forEach((el) => {
+        if (mobile) {
+          el.style.transform = "none";
+          return;
+        }
         const parent = el.parentElement;
         if (!parent) return;
         const rect = parent.getBoundingClientRect();
@@ -95,9 +109,13 @@ export function useStackMotion(lang: Locale) {
       });
 
       const circle = document.querySelector<HTMLElement>("[data-circle]");
-      if (circle?.parentElement) {
-        const progress = enter(circle.parentElement);
-        circle.style.clipPath = progress >= 1 ? "none" : `circle(${progress * 150}% at 50% 100%)`;
+      if (circle) {
+        if (mobile) {
+          circle.style.clipPath = "none";
+        } else if (circle.parentElement) {
+          const progress = enter(circle.parentElement);
+          circle.style.clipPath = progress >= 1 ? "none" : `circle(${progress * 150}% at 50% 100%)`;
+        }
       }
 
       const wipe = document.querySelector<HTMLElement>("[data-wipe]");

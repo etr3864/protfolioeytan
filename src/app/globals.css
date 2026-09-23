@@ -716,6 +716,15 @@ html:has(.lang-shift) { overflow: hidden; }
   transition: background 0.3s, color 0.3s, gap 0.35s;
 }
 .enlarge:hover { background: var(--ink); color: var(--cream); gap: 20px; }
+.go {
+  width: 0.55em;
+  height: 0.55em;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: translateY(-0.05em) rotate(45deg);
+  display: inline-block;
+  flex: none;
+}
 .cert {
   aspect-ratio: 1600 / 1131;
   background: #d8d1c3;
@@ -972,7 +981,12 @@ html:has(.lang-shift) { overflow: hidden; }
   color: var(--cream);
   outline: none;
   min-width: 0;
+  min-height: 24px;
   font-size: 16px;
+}
+.hed-form input::placeholder {
+  color: rgba(235, 230, 220, 0.62);
+  opacity: 1;
 }
 .hed-form input:disabled, .hed-form button:disabled { opacity: 0.45; cursor: default; }
 

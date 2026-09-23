@@ -15,7 +15,11 @@ type LangValue = {
 const LangContext = createContext<LangValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Locale>("he");
+  const [lang, setLangState] = useState<Locale>(() => {
+    if (typeof window === "undefined") return "en";
+    const saved = localStorage.getItem("cv-lang");
+    return saved === "he" || saved === "en" ? saved : "en";
+  });
   const [pending, setPending] = useState<Locale | null>(null);
 
   useEffect(() => {

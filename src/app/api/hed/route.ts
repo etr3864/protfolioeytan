@@ -4,7 +4,8 @@ import { cleanHedText } from "@/lib/hed/text";
 export const runtime = "nodejs";
 
 const WINDOW = 150;
-const MAX_CHARS = 1200;
+const USER_MAX = 1200;
+const MODEL_MAX = 8000;
 const LIMIT = 20;
 const WINDOW_MS = 10 * 60 * 1000;
 
@@ -39,8 +40,8 @@ function readTurns(value: unknown): Turn[] | null {
     const signature = (item as { signature?: unknown }).signature;
     if ((role !== "user" && role !== "model") || typeof text !== "string") return null;
     const clean = cleanHedText(text);
-    if (!clean || clean.length > MAX_CHARS) return null;
-    if (signature !== undefined && (role !== "model" || typeof signature !== "string" || signature.length > 8000)) return null;
+    if (!clean || clean.length > (role === "user" ? USER_MAX : MODEL_MAX)) return null;
+    if (signature !== undefined && (role !== "model" || typeof signature !== "string" || signature.length > 24000)) return null;
     turns.push(signature ? { role, text: clean, signature } : { role, text: clean });
   }
   if (turns[turns.length - 1]?.role !== "user") return null;

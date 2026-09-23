@@ -18,7 +18,7 @@ export function Hed({ children }: { children: React.ReactNode }) {
   const [note, setNote] = useState("");
   const [messages, setMessages] = useState<Turn[]>([]);
   const logRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = useRef(false);
   const generation = useRef(0);
 
@@ -74,6 +74,13 @@ export function Hed({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
   }, [messages, pending, visible]);
+
+  useEffect(() => {
+    const field = inputRef.current;
+    if (!field) return;
+    field.style.height = "auto";
+    field.style.height = `${Math.min(field.scrollHeight, 132)}px`;
+  }, [draft, shown, lang]);
 
   async function send(text: string) {
     const clean = text.replace(/\s+/g, " ").trim();
@@ -182,13 +189,22 @@ export function Hed({ children }: { children: React.ReactNode }) {
                 send(draft);
               }}
             >
-              <input
+              <textarea
                 ref={inputRef}
+                rows={1}
                 value={draft}
                 maxLength={1200}
                 placeholder={t.hedPlaceholder}
+                aria-label={t.hedPlaceholder}
                 disabled={pending}
+                enterKeyHint="send"
                 onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                    event.preventDefault();
+                    send(draft);
+                  }
+                }}
               />
               <button type="submit" disabled={pending}>{t.hedSend}</button>
             </form>

@@ -542,7 +542,7 @@ html:has(.lang-shift) { overflow: hidden; }
 .exp-detail .summary {
   margin: 0;
   max-width: 68ch;
-  font-size: 17px;
+    font-size: 17px;
   line-height: 1.7;
   text-wrap: pretty;
 }
@@ -1100,7 +1100,32 @@ html:has(.lang-shift) { overflow: hidden; }
 }
 .suggest button:hover { border-color: var(--accent); }
 .hed-note { font-size: 12px; color: var(--muted); }
-.hed-think { display: flex; align-items: center; gap: 10px; }
+.hed-think {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-right: auto;
+  padding: 10px 14px;
+  border-radius: 18px 18px 18px 4px;
+  background: rgba(235, 230, 220, 0.06);
+  transform-origin: left bottom;
+  animation: hed-in 0.45s var(--ease) both;
+}
+.hed-log .mine { transform-origin: right bottom; animation: hed-in 0.45s var(--ease) both; }
+.hed-log .agent { transform-origin: left bottom; animation: hed-in 0.55s var(--ease) both; }
+.suggest button { animation: hed-rise 0.5s var(--ease) both; }
+.suggest button:nth-child(2) { animation-delay: 0.06s; }
+.suggest button:nth-child(3) { animation-delay: 0.12s; }
+.suggest button:nth-child(4) { animation-delay: 0.18s; }
+@keyframes hed-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hed-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
 .hed-dots { display: inline-flex; align-items: center; gap: 5px; height: 12px; }
 .hed-dots i {
   width: 7px;
@@ -1118,7 +1143,7 @@ html:has(.lang-shift) { overflow: hidden; }
 .hed-form { border-top: 1px solid rgba(235, 230, 220, 0.12); }
 .hed-credit { margin: 0; padding: 0 18px 12px; font-size: 12px; line-height: 1.4; color: rgba(235, 230, 220, 0.55); }
 .exp-role a:hover { text-decoration: underline; }
-.hed-form input {
+.hed-form textarea {
   flex: 1;
   border: 0;
   background: transparent;
@@ -1126,13 +1151,19 @@ html:has(.lang-shift) { overflow: hidden; }
   outline: none;
   min-width: 0;
   min-height: 24px;
+  max-height: 132px;
+  padding: 0;
+  resize: none;
+  font: inherit;
   font-size: 16px;
+  line-height: 1.5;
+  overflow-y: auto;
 }
-.hed-form input::placeholder {
+.hed-form textarea::placeholder {
   color: rgba(235, 230, 220, 0.62);
   opacity: 1;
 }
-.hed-form input:disabled, .hed-form button:disabled { opacity: 0.45; cursor: default; }
+.hed-form textarea:disabled, .hed-form button:disabled { opacity: 0.45; cursor: default; }
 
 .hed-mark {
   position: fixed;
@@ -1452,6 +1483,21 @@ html:has(.lang-shift) { overflow: hidden; }
     width: auto;
     border-radius: 22px;
   }
+  .hed-form {
+    align-items: flex-end;
+    gap: 8px;
+    margin: 0 12px 12px;
+    padding: 8px 8px 8px 14px;
+    border: 1px solid rgba(235, 230, 220, 0.28);
+    border-radius: 22px;
+    background: rgba(235, 230, 220, 0.08);
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .hed-panel[dir="rtl"] .hed-form { padding: 8px 14px 8px 8px; }
+  .hed-form:focus-within { border-color: var(--accent); background: rgba(235, 230, 220, 0.12); }
+  .hed-form textarea { padding: 7px 0; font-size: 16px; }
+  .hed-form button { flex: none; min-height: 38px; padding: 8px 16px; }
+  .hed-credit { padding-bottom: 10px; }
   .lightbox { padding: 18px; }
   .cert { transform: none; }
 }
@@ -1468,6 +1514,7 @@ html:has(.lang-shift) { overflow: hidden; }
   .contact-title i { transform: none !important; }
   .exp-sweep, .exp-fold { transition: none; }
   .hed-dots i { animation: none; opacity: 1; }
+  .hed-log .mine, .hed-log .agent, .hed-think, .suggest button { animation: none; }
   .hed-mark b::after { animation: none; }
   .hed-panel, .hed-catch { transition: none; }
   .hed-panel { opacity: 1; transform: none; }

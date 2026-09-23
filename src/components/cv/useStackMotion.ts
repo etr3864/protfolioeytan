@@ -140,7 +140,7 @@ export function useStackMotion(lang: Locale) {
           target = narrow() ? between(progress * distance + manual, 0, distance) : progress * distance;
         }
         if (!narrow()) manual = 0;
-        const shown = narrow() && distance ? clamp(target / distance, 0, 1) : progress;
+        const shown = narrow() && distance ? clamp(target / distance) : progress;
         const frame = scroller.querySelector<HTMLElement>("[data-hs-frame]");
         const reveal = enter(scroller);
         if (frame) {

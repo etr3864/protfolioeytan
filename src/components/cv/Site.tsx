@@ -241,9 +241,12 @@ function Experience() {
                   data-hot={hot === index ? "1" : "0"}
                   data-open={on ? "1" : "0"}
                   style={{ opacity: dim ? 0.5 : 1 }}
-                  onMouseEnter={() => setHot(index)}
+                  onMouseEnter={() => {
+                    if (window.matchMedia("(hover: hover)").matches) setHot(index);
+                  }}
                   onMouseLeave={() => setHot(null)}
                   onMouseMove={(event) => {
+                    if (!window.matchMedia("(hover: hover)").matches) return;
                     const rect = event.currentTarget.getBoundingClientRect();
                     event.currentTarget.style.setProperty("--mx", `${event.clientX - rect.left}px`);
                     event.currentTarget.style.setProperty("--my", `${event.clientY - rect.top}px`);
@@ -409,11 +412,11 @@ function Projects() {
                   </div>
                   <div className="links">
                     <a className="solid" href={project.link} target="_blank" rel="noreferrer">
-                      {project.linkLabel} <span>↗</span>
+                      {project.linkLabel} <span className="go" aria-hidden="true" />
                     </a>
                     {project.link2 && project.link2Label ? (
                       <a className="ghost" href={project.link2} target="_blank" rel="noreferrer">
-                        {project.link2Label} <span>↗</span>
+                        {project.link2Label} <span className="go" aria-hidden="true" />
                       </a>
                     ) : null}
                   </div>

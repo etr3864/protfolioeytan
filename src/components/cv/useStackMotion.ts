@@ -19,6 +19,7 @@ export function useStackMotion(lang: Locale) {
     const rtl = lang === "he";
 
     const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const between = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
     const enter = (el: Element) => clamp(1 - el.getBoundingClientRect().top / window.innerHeight);
     const narrow = () => window.matchMedia(narrowQuery).matches;
 
@@ -135,7 +136,11 @@ export function useStackMotion(lang: Locale) {
         scroller.style.height = `${vh * 1.2 + distance}px`;
         const rect = scroller.getBoundingClientRect();
         const progress = clamp(-rect.top / Math.max(1, distance));
-        target = progress * distance;
+        if (!dragging) {
+          target = narrow() ? between(progress * distance + manual, 0, distance) : progress * distance;
+        }
+        if (!narrow()) manual = 0;
+        const shown = narrow() && distance ? clamp(target / distance, 0, 1) : progress;
         const frame = scroller.querySelector<HTMLElement>("[data-hs-frame]");
         const reveal = enter(scroller);
         if (frame) {
@@ -144,11 +149,11 @@ export function useStackMotion(lang: Locale) {
           frame.style.clipPath = reveal >= 1 ? "none" : `inset(${insetY}% ${insetX}% 0 ${insetX}% round 28px)`;
         }
         const bar = scroller.querySelector<HTMLElement>("[data-hs-bar]");
-        if (bar) bar.style.transform = `scaleX(${progress})`;
+        if (bar) bar.style.transform = `scaleX(${shown})`;
         const count = scroller.querySelector<HTMLElement>("[data-hs-count]");
         const total = track.children.length;
         if (count && total) {
-          count.textContent = String(Math.min(total, Math.round(progress * (total - 1)) + 1)).padStart(2, "0");
+          count.textContent = String(Math.min(total, Math.round(shown * (total - 1)) + 1)).padStart(2, "0");
         }
         if (!loop) animate();
       }
@@ -187,6 +192,14 @@ export function useStackMotion(lang: Locale) {
       });
     };
 
+    let manual = 0;
+    let dragging = false;
+    let dragOrigin = 0;
+    let startX = 0;
+    let startY = 0;
+    let axis: "" | "x" | "y" = "";
+    let suppressClick = false;
+
     const animate = () => {
       const track = document.querySelector<HTMLElement>("[data-track]");
       if (!track) {
@@ -196,7 +209,7 @@ export function useStackMotion(lang: Locale) {
       current += (target - current) * 0.085;
       const delta = target - current;
       const limit = narrow() ? 2.2 : 5;
-      const skew = Math.max(-limit, Math.min(limit, delta * (narrow() ? 0.006 : 0.012)));
+      const skew = dragging ? 0 : Math.max(-limit, Math.min(limit, delta * (narrow() ? 0.006 : 0.012)));
       track.style.transform = `translateX(${(rtl ? 1 : -1) * current}px)`;
       track.querySelectorAll<HTMLElement>("[data-card]").forEach((card) => {
         card.style.transform = `skewX(${(rtl ? 1 : -1) * skew}deg)`;
@@ -208,6 +221,90 @@ export function useStackMotion(lang: Locale) {
       });
       loop = Math.abs(delta) > 0.3 ? requestAnimationFrame(animate) : 0;
     };
+
+    const trackEl = document.querySelector<HTMLElement>("[data-track]");
+    const paintMeter = () => {
+      const scroller = trackEl?.closest<HTMLElement>("[data-hs]");
+      if (!scroller || !trackEl || !distance) return;
+      const shown = between(target, 0, distance) / distance;
+      const bar = scroller.querySelector<HTMLElement>("[data-hs-bar]");
+      if (bar) bar.style.transform = `scaleX(${shown})`;
+      const count = scroller.querySelector<HTMLElement>("[data-hs-count]");
+      const total = trackEl.children.length;
+      if (count && total) count.textContent = String(Math.min(total, Math.round(shown * (total - 1)) + 1)).padStart(2, "0");
+    };
+    const pageProgress = () => {
+      const scroller = trackEl?.closest<HTMLElement>("[data-hs]");
+      return clamp(-(scroller?.getBoundingClientRect().top ?? 0) / Math.max(1, distance));
+    };
+    const stopPointer = () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!narrow() || event.pointerType === "mouse" || !trackEl) return;
+      dragging = true;
+      axis = "";
+      startX = event.clientX;
+      startY = event.clientY;
+      dragOrigin = current;
+      window.addEventListener("pointermove", onPointerMove, { passive: false });
+      window.addEventListener("pointerup", onPointerUp);
+      window.addEventListener("pointercancel", onPointerUp);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (!dragging) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (!axis) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+        if (axis === "y") {
+          dragging = false;
+          stopPointer();
+          return;
+        }
+      }
+      if (axis !== "x" || !trackEl) return;
+      event.preventDefault();
+      const next = between(dragOrigin - dx, 0, distance);
+      current = next;
+      target = next;
+      manual = next - pageProgress() * distance;
+      paintMeter();
+      if (!loop) animate();
+    };
+    const onPointerUp = () => {
+      stopPointer();
+      if (!dragging && axis !== "x") {
+        dragging = false;
+        axis = "";
+        return;
+      }
+      const moved = axis === "x";
+      dragging = false;
+      axis = "";
+      if (!moved || !trackEl) return;
+      suppressClick = true;
+      const card = trackEl.querySelector<HTMLElement>("[data-card]");
+      const gap = Number.parseFloat(getComputedStyle(trackEl).columnGap || getComputedStyle(trackEl).gap) || 0;
+      const step = Math.max(1, (card?.offsetWidth ?? 1) + gap);
+      const snapped = between(Math.round(current / step) * step, 0, distance);
+      const progress = pageProgress();
+      target = snapped;
+      manual = snapped - progress * distance;
+      paintMeter();
+      if (!loop) animate();
+    };
+    const onClickCapture = (event: Event) => {
+      if (!suppressClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClick = false;
+    };
+    trackEl?.addEventListener("pointerdown", onPointerDown);
+    trackEl?.addEventListener("click", onClickCapture, true);
 
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(tick);
@@ -223,6 +320,9 @@ export function useStackMotion(lang: Locale) {
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);
       cancelAnimationFrame(loop);
+      stopPointer();
+      trackEl?.removeEventListener("pointerdown", onPointerDown);
+      trackEl?.removeEventListener("click", onClickCapture, true);
     };
   }, [lang]);
 }

@@ -199,6 +199,12 @@ export function Hed({ children }: { children: React.ReactNode }) {
                 aria-label={t.hedPlaceholder}
                 disabled={pending}
                 onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+                  if (!window.matchMedia("(min-width: 901px)").matches) return;
+                  event.preventDefault();
+                  send(event.currentTarget.value);
+                }}
               />
               <button type="submit" disabled={pending}>{t.hedSend}</button>
             </form>

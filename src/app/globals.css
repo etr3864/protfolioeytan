@@ -1017,7 +1017,8 @@ html:has(.lang-shift) { overflow: hidden; }
   z-index: 80;
   top: 16px;
   bottom: 16px;
-  inset-inline-end: 16px;
+  right: 16px;
+  left: auto;
   width: min(440px, calc(100vw - 32px));
   background: linear-gradient(165deg, rgba(235, 230, 220, 0.22), rgba(31, 33, 26, 0.82) 22%);
   color: var(--cream);
@@ -1033,8 +1034,8 @@ html:has(.lang-shift) { overflow: hidden; }
   transform: translateY(18px) scale(0.96);
   transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
 }
-.hed-panel[dir="ltr"] { transform-origin: right bottom; }
-.hed-panel[dir="rtl"] { transform-origin: left bottom; }
+.hed-panel[dir="ltr"],
+.hed-panel[dir="rtl"] { transform-origin: right bottom; }
 .hed-panel[data-open="1"] { opacity: 1; transform: none; }
 @supports (backdrop-filter: blur(1px)) {
   .hed-panel { backdrop-filter: blur(28px); }

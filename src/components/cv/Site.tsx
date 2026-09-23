@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Hed } from "@/components/hed/Hed";
 import { DevMark } from "./DevMark";
 import { Intro } from "./Intro";
@@ -26,9 +26,6 @@ function Nav() {
   const { t, lang, beginShift, pending } = useLang();
   return (
     <nav className="nav">
-      <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); scrollToId("top"); }}>
-        {t.full}
-      </a>
       <div className="nav-side">
         <div className="nav-pills">
           {t.nav.map((item) => (
@@ -60,6 +57,73 @@ function Dots() {
   );
 }
 
+function ease(t: number) {
+  const cx = 0.6;
+  const bx = -0.6;
+  const ax = 1;
+  const cy = 2.1;
+  const by = -1.2;
+  const ay = 0.1;
+  const sampleX = (u: number) => ((ax * u + bx) * u + cx) * u;
+  const sampleY = (u: number) => ((ay * u + by) * u + cy) * u;
+  const slope = (u: number) => (3 * ax * u + 2 * bx) * u + cx;
+  let u = t;
+  for (let i = 0; i < 6; i += 1) {
+    const delta = sampleX(u) - t;
+    if (Math.abs(delta) < 1e-4) break;
+    u -= delta / slope(u);
+  }
+  return sampleY(Math.min(1, Math.max(0, u)));
+}
+
+function StatValue({ value, delay }: { value: string; delay: number }) {
+  const match = /^(\d+)(.*)$/.exec(value);
+  const target = match ? Number(match[1]) : null;
+  const suffix = match?.[2] ?? "";
+  const [shown, setShown] = useState(target === null ? value : `0${suffix}`);
+
+  useEffect(() => {
+    if (target === null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(value);
+      return;
+    }
+    let frame = 0;
+    let timer = 0;
+    const run = () => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / 1200);
+        setShown(`${Math.round(target * ease(t))}${suffix}`);
+        if (t < 1) frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    };
+    const arm = () => {
+      timer = window.setTimeout(run, delay);
+    };
+    let obs: MutationObserver | null = null;
+    if (document.querySelector(".intro")) {
+      obs = new MutationObserver(() => {
+        if (!document.querySelector(".intro")) {
+          obs?.disconnect();
+          arm();
+        }
+      });
+      obs.observe(document.documentElement, { childList: true, subtree: true });
+    } else {
+      arm();
+    }
+    return () => {
+      obs?.disconnect();
+      window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
+    };
+  }, [delay, suffix, target, value]);
+
+  return shown;
+}
+
 function Hero() {
   const { t } = useLang();
   const stats = [...t.facts, t.commandStat];
@@ -79,7 +143,6 @@ function Hero() {
         </div>
         <div className="hero-bottom">
           <div className="expertise">
-            <span>{t.expertiseLabel}</span>
             {t.expertise.map((item) => (
               <a key={item.to} href={`#${item.to}`} onClick={(event) => { event.preventDefault(); scrollToId(item.to); }}>
                 {item.label} <span>›</span>
@@ -87,9 +150,9 @@ function Hero() {
             ))}
           </div>
           <div className="stats">
-            {stats.map((fact) => (
+            {stats.map((fact, index) => (
               <div key={fact.k}>
-                <strong>{fact.v}</strong>
+                <strong><StatValue value={fact.v} delay={index * 80} /></strong>
                 <span>{fact.k}</span>
               </div>
             ))}
@@ -102,9 +165,9 @@ function Hero() {
 }
 
 function Rich({ text }: { text: string }) {
-  const parts = text.split(/(AI|CTO)/g);
+  const parts = text.split(/(\b(?:AI|CTO|Python|JS)\b)/g);
   if (parts.length === 1) return text;
-  return parts.map((part, index) => (part === "AI" || part === "CTO" ? <bdi key={`${part}-${index}`}>{part}</bdi> : part));
+  return parts.map((part, index) => (part === "AI" || part === "CTO" || part === "Python" || part === "JS" ? <bdi key={`${part}-${index}`}>{part}</bdi> : part));
 }
 
 function Words({ text }: { text: string }) {
@@ -132,11 +195,10 @@ function About() {
           </div>
         </div>
         <div className="about-grid">
-          <div className="eyebrow">{t.aboutLabel}</div>
           <div className="about-copy">
             <Words text={t.statement} />
-            <p className="about-lead"><Rich text={t.aboutLead} /></p>
-            <div className="about-body">
+            <div className="about-prose">
+              <p className="about-lead"><Rich text={t.aboutLead} /></p>
               {t.aboutBody.map((paragraph) => (
                 <p key={paragraph}><Rich text={paragraph} /></p>
               ))}

@@ -38,10 +38,8 @@ export type CvCopy = {
   available: string;
   heroKicker: string;
   heroTitle: string;
-  expertiseLabel: string;
   expertise: { label: string; to: string }[];
   nav: { id: string; label: string }[];
-  aboutLabel: string;
   statement: string;
   aboutLead: string;
   aboutBody: string[];
@@ -111,7 +109,6 @@ export const cv: Record<Locale, CvCopy> = {
     available: "פתוח לתפקידי הנהלה",
     heroKicker: "מעבר למערכת",
     heroTitle: "טכנולוגיה. שיווק. הבנה עסקית.",
-    expertiseLabel: "תחומי מומחיות:",
     expertise: [
       { label: "תפעול והנהלה", to: "experience" },
       { label: "מערכות AI", to: "projects" },
@@ -124,20 +121,19 @@ export const cv: Record<Locale, CvCopy> = {
       { id: "education", label: "השכלה" },
       { id: "contact", label: "קשר" },
     ],
-    aboutLabel: "אודות",
     statement: "אני יודע לזהות מה באמת מקדם חברה, ולבנות סביב זה את כל השאר.",
     aboutLead:
       "בכל חברה יש כמה דברים בודדים שקובעים את רוב התוצאות. קודם כול אני מאתר אותם, אחר כך מגדיר לכל אחד מדד ויעד, ורק אז בונה סביבם מערכות וצוות.",
     aboutBody: [
       "הייתי שותף מייסד ו־CTO בחברה שפיתחה סוכני AI לקול ולטקסט. המערכת רצה אצל עשרות לקוחות בפרודקשן. מאז אני מתמקד בניהול, בהשפעה, בארכיטקטורה ובפיתוח, כי AI כבר יכול לכתוב את הקוד בשבילי.",
-      "הרקע שלי טכני, בעיקר ארכיטקטורה ותשתיות, אבל ניהלתי גם תקציבי שיווק ובניתי מודלים עסקיים. לכן אני מדבר באותה קלות עם המפתחים ועם מי שמחזיק את התקציב.",
+      "הרקע שלי התחיל בשיווק, משם עברתי לפיתוח תוכנה ב-Python וב-JS, ואחר כך לארכיטקטורה. לכן אני מדבר באותה קלות עם המפתחים ועם מי שמחזיק את התקציב.",
     ],
     facts: [
-      { k: "שנות ניהול", v: "5+" },
+      { k: "שנות ניהול ומנהיגות", v: "5+" },
       { k: "לקוחות בפרודקשן", v: "40+" },
-      { k: "SOPs שנכתבו", v: "24" },
+      { k: "מפתחים בצוותים שניהלתי", v: "8" },
     ],
-    commandStat: { k: "שנות צבא בפיקוד", v: "3" },
+    commandStat: { k: "SOPs שכתבתי", v: "23+" },
     expLabel: "ניסיון",
     experience: [
       {
@@ -353,7 +349,6 @@ export const cv: Record<Locale, CvCopy> = {
     available: "Open to leadership roles",
     heroKicker: "Beyond the system",
     heroTitle: "Technology. Marketing. Business sense.",
-    expertiseLabel: "Areas of expertise:",
     expertise: [
       { label: "Operations & leadership", to: "experience" },
       { label: "AI systems", to: "projects" },
@@ -366,20 +361,19 @@ export const cv: Record<Locale, CvCopy> = {
       { id: "education", label: "Education" },
       { id: "contact", label: "Contact" },
     ],
-    aboutLabel: "About",
     statement: "I know how to spot what actually moves a company forward, and build everything else around it.",
     aboutLead:
       "In every company, a handful of things drive most of the results. First I find them, then I give each one a metric and a target, and only then do I build the systems and the team around them.",
     aboutBody: [
       "I was a co-founder and CTO of a company building voice and text AI agents, running in production for dozens of clients. Since then I've focused on management, influence, architecture and development, because AI can already write the code for me.",
-      "My background is technical, mostly architecture and infrastructure, but I've also managed marketing budgets and built business models. So I'm just as comfortable talking to the developers as to whoever holds the budget.",
+      "My background started in marketing, then moved into software development in Python and JS, and then into architecture. So I'm just as comfortable talking to the developers as to whoever holds the budget.",
     ],
     facts: [
-      { k: "Years leading", v: "5+" },
+      { k: "Years managing and leading", v: "5+" },
       { k: "Clients in production", v: "40+" },
-      { k: "SOPs written", v: "24" },
+      { k: "Developers across teams I managed", v: "8" },
     ],
-    commandStat: { k: "Years in command", v: "3" },
+    commandStat: { k: "SOPs I wrote", v: "23+" },
     expLabel: "Experience",
     experience: [
       {

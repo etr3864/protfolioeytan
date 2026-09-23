@@ -11,6 +11,8 @@ const WINDOW = 24;
 export function Hed({ children }: { children: React.ReactNode }) {
   const { t, lang } = useLang();
   const [visible, setVisible] = useState(false);
+  const [present, setPresent] = useState(false);
+  const [shown, setShown] = useState(false);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
   const [note, setNote] = useState("");
@@ -36,18 +38,38 @@ export function Hed({ children }: { children: React.ReactNode }) {
   }, [messages]);
 
   useEffect(() => {
-    if (!visible) return;
+    if (visible) {
+      setPresent(true);
+      return;
+    }
+    setShown(false);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setPresent(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setPresent(false), 560);
+    return () => window.clearTimeout(timer);
+  }, [visible]);
+
+  useEffect(() => {
+    if (!present || !visible) return;
+    const timer = window.setTimeout(() => setShown(true), 30);
+    return () => window.clearTimeout(timer);
+  }, [present, visible]);
+
+  useEffect(() => {
+    if (!shown) return;
     inputRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setVisible(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [visible]);
+  }, [shown]);
 
   useEffect(() => {
-    if (visible && !pending) inputRef.current?.focus();
-  }, [pending, visible]);
+    if (shown && !pending) inputRef.current?.focus();
+  }, [pending, shown]);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -100,24 +122,16 @@ export function Hed({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div>{children}</div>
-      {visible ? null : (
-        <button type="button" className="hed-mark" dir={lang === "he" ? "rtl" : "ltr"} onClick={() => setVisible(true)}>
-          <span className="hed-mark-meter" aria-hidden="true" />
-          <span className="hed-mark-body">
-            <span className="hed-dots" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            <b>{t.hedName}</b>
-            <small>{t.hedMark}</small>
-          </span>
+      {present ? null : (
+        <button type="button" className="hed-mark" dir="ltr" aria-label={`${t.hedName}, ${t.hedMark}`} onClick={() => setVisible(true)}>
+          <b>{t.hedName}</b>
+          <small dir={lang === "he" ? "rtl" : "ltr"} lang={lang}>{t.hedMark}</small>
         </button>
       )}
-      {visible ? (
+      {present ? (
         <>
-          <button type="button" className="hed-catch" aria-label={t.hedClose} onClick={() => setVisible(false)} />
-          <aside className="hed-panel" role="dialog" aria-label={t.hedName} dir={lang === "he" ? "rtl" : "ltr"} lang={lang}>
+          <button type="button" className="hed-catch" data-open={shown ? "1" : "0"} aria-label={t.hedClose} onClick={() => setVisible(false)} />
+          <aside className="hed-panel" data-open={shown ? "1" : "0"} role="dialog" aria-label={t.hedName} dir={lang === "he" ? "rtl" : "ltr"} lang={lang}>
             <header className="hed-head">
               <strong>{t.hedName}</strong>
               <span className="hed-actions">
@@ -130,12 +144,12 @@ export function Hed({ children }: { children: React.ReactNode }) {
               </span>
             </header>
             <div className="hed-log" ref={logRef}>
-              <p>
+              <p className="agent">
                 <span className="who">{t.hedName}</span>
                 {t.hedGreeting}
               </p>
               {messages.map((turn, index) => (
-                <p key={`${turn.role}-${index}`} className={turn.role === "user" ? "mine" : undefined}>
+                <p key={`${turn.role}-${index}`} className={turn.role === "user" ? "mine" : "agent"}>
                   {turn.role === "model" ? <span className="who">{t.hedName}</span> : null}
                   {turn.text}
                 </p>

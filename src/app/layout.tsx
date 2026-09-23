@@ -9,6 +9,12 @@ const rubik = Rubik({
   display: "swap",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "איתן דוד טורג׳מן",
   description: "ראש תפעול, מערכות AI ואסטרטגיה עסקית.",

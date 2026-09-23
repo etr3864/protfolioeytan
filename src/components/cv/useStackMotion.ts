@@ -333,7 +333,7 @@ export function useStackMotion(lang: Locale) {
       }
       if (axis !== "x" || !trackEl) return;
       event.preventDefault();
-      const next = between(dragOrigin - dx, 0, distance);
+      const next = between(dragOrigin + (rtl ? dx : -dx), 0, distance);
       current = next;
       target = next;
       manual = next;

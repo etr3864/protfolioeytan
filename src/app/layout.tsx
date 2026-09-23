@@ -1,43 +1,30 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Heebo } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const heebo = Heebo({
-  variable: "--font-heebo",
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["hebrew", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Eytan Turgeman | AI Solutions Developer & Marketing Strategist",
-  description:
-    "AI Solutions Developer with marketing strategy background. Python, JavaScript, GCP, PPC, and team leadership.",
-  icons: {
-    icon: "/icon.svg",
-  },
+  title: "איתן דוד טורג׳מן",
+  description: "ראש תפעול, מערכות AI ואסטרטגיה עסקית.",
+  icons: { icon: "/icon.svg" },
   openGraph: {
-    title: "Eytan Turgeman | CV",
-    description: "AI · Marketing · Leadership",
+    title: "Eytan David Turgeman",
+    description: "Head of Operations · AI Systems · Business Strategy",
     type: "website",
+    images: [{ url: "/media/eytan-hero.jpg" }],
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${heebo.variable} h-full scroll-smooth`}>
-      <body className="min-h-full bg-[#101018] font-sans antialiased">{children}</body>
+    <html lang="he" className={`${rubik.variable} h-full`}>
+      <body className="min-h-full antialiased">{children}</body>
     </html>
   );
 }

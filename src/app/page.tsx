@@ -1,5 +1,5 @@
-import CVPage from "@/components/CVPage";
+import { Site } from "@/components/cv/Site";
 
 export default function Home() {
-  return <CVPage />;
+  return <Site />;
 }

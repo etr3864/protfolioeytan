@@ -2,7 +2,7 @@ import { hedSystem } from "@/lib/hed/prompt";
 
 export const runtime = "nodejs";
 
-const WINDOW = 24;
+const WINDOW = 150;
 const MAX_CHARS = 1200;
 const LIMIT = 20;
 const WINDOW_MS = 10 * 60 * 1000;

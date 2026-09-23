@@ -6,7 +6,7 @@ import { useLang } from "@/components/cv/language";
 type Turn = { role: "user" | "model"; text: string; signature?: string };
 
 const STORAGE = "hed-thread";
-const WINDOW = 24;
+const WINDOW = 150;
 
 export function Hed({ children }: { children: React.ReactNode }) {
   const { t, lang } = useLang();
@@ -172,7 +172,7 @@ export function Hed({ children }: { children: React.ReactNode }) {
                 </p>
               ) : null}
               {note ? <p className="hed-note">{note}</p> : null}
-              {messages.length >= 20 ? <p className="hed-note">{t.hedLimit}</p> : null}
+              {messages.length >= WINDOW - 10 ? <p className="hed-note">{t.hedLimit}</p> : null}
             </div>
             <p className="hed-credit">{t.botCredit}</p>
             <form

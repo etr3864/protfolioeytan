@@ -164,6 +164,10 @@ export function CvDocument({ lang }: { lang: Locale }) {
           <Link src={linkedin.href} style={{ color: ink, textDecoration: "none" }}>
             <Text style={{ ...styles.contacts, marginTop: 0, ...writing }}>{linkedin.v}</Text>
           </Link>
+          <Text style={{ ...styles.contacts, marginTop: 0, ...writing }}>  ·  </Text>
+          <Link src="https://www.eytan.site" style={{ color: accent, textDecoration: "none" }}>
+            <Text style={{ ...styles.contacts, marginTop: 0, color: accent, ...writing }}>www.eytan.site</Text>
+          </Link>
         </View>
         {copy.summary.map((line, index) => (
           <Text key={line} style={{ ...styles.summary, marginTop: index === 0 ? 8 : 1, ...writing }}>

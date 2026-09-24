@@ -1,4 +1,5 @@
 import { hedSystem } from "@/lib/hed/prompt";
+import { addTurns, startConversation, storeReady } from "@/lib/hed/store";
 import { cleanHedText } from "@/lib/hed/text";
 
 export const runtime = "nodejs";
@@ -61,6 +62,21 @@ function replyFrom(payload: unknown) {
   return signature ? { text, signature } : { text };
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function readPerson(value: unknown) {
+  if (!value || typeof value !== "object") return null;
+  const field = (key: string) => {
+    const raw = (value as Record<string, unknown>)[key];
+    return typeof raw === "string" ? raw.replace(/\s+/g, " ").trim().slice(0, 120) : "";
+  };
+  const name = field("name");
+  const phone = field("phone");
+  const role = field("role");
+  if (!name || !phone || !role) return null;
+  return { name, phone, role };
+}
+
 export async function POST(request: Request) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return Response.json({ error: "missing" }, { status: 503 });
@@ -77,10 +93,37 @@ export async function POST(request: Request) {
   const locale = (body as { locale?: unknown })?.locale === "en" ? "en" : "he";
   if (!messages) return Response.json({ error: "bad" }, { status: 400 });
 
+  const person = readPerson((body as { person?: unknown })?.person);
+  const passed = (body as { conversationId?: unknown })?.conversationId;
+  let conversationId = typeof passed === "string" && UUID.test(passed) ? passed : "";
+  if (!conversationId && !person) return Response.json({ error: "person" }, { status: 400 });
+
   const result = await ask(key, locale, messages);
   if (result.kind === "rate") return Response.json({ error: "rate" }, { status: 429 });
   if (result.kind === "empty") return Response.json({ error: "empty" }, { status: 502 });
-  return Response.json(result.signature ? { text: result.text, signature: result.signature } : { text: result.text });
+
+  if (storeReady()) {
+    try {
+      if (!conversationId && person) {
+        conversationId = await startConversation({ ...person, lang: locale });
+        await addTurns(
+          conversationId,
+          messages.map((turn) => ({ role: turn.role, text: turn.text })),
+        );
+      } else if (conversationId) {
+        await addTurns(conversationId, [{ role: "user", text: messages[messages.length - 1].text }]);
+      }
+      await addTurns(conversationId, [{ role: "model", text: result.text }]);
+    } catch (error) {
+      console.error("hed store", error instanceof Error ? error.message : "failed");
+    }
+  }
+
+  return Response.json({
+    text: result.text,
+    ...(result.signature ? { signature: result.signature } : {}),
+    ...(conversationId ? { conversationId } : {}),
+  });
 }
 
 function sleep(ms: number) {

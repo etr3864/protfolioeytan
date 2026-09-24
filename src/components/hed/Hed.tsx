@@ -7,7 +7,11 @@ import { cleanHedText } from "@/lib/hed/text";
 type Turn = { role: "user" | "model"; text: string; signature?: string };
 
 const STORAGE = "hed-thread";
+const THREAD_ID = "hed-conversation";
+const PERSON = "hed-person";
 const WINDOW = 150;
+
+type Person = { name: string; phone: string; role: string };
 
 export function Hed({ children }: { children: React.ReactNode }) {
   const { t, lang } = useLang();
@@ -18,12 +22,17 @@ export function Hed({ children }: { children: React.ReactNode }) {
   const [pending, setPending] = useState(false);
   const [note, setNote] = useState("");
   const [messages, setMessages] = useState<Turn[]>([]);
+  const [held, setHeld] = useState("");
+  const [person, setPerson] = useState<Person>({ name: "", phone: "", role: "" });
+  const [gateNote, setGateNote] = useState("");
+  const thread = useRef("");
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = useRef(false);
   const generation = useRef(0);
 
   useEffect(() => {
+    thread.current = sessionStorage.getItem(THREAD_ID) || "";
     const raw = sessionStorage.getItem(STORAGE);
     if (!raw) return;
     try {
@@ -83,9 +92,21 @@ export function Hed({ children }: { children: React.ReactNode }) {
     field.style.height = `${Math.min(field.scrollHeight, 132)}px`;
   }, [draft, shown, lang]);
 
-  async function send(text: string) {
+  async function send(text: string, who?: Person) {
     const clean = cleanHedText(text);
     if (!clean || busy.current) return;
+    if (!thread.current && !who) {
+      const saved = sessionStorage.getItem(PERSON);
+      const known = saved ? (JSON.parse(saved) as Person) : null;
+      if (known?.name && known.phone && known.role) {
+        who = known;
+      } else {
+        setHeld(clean);
+        setDraft("");
+        setGateNote("");
+        return;
+      }
+    }
     const ticket = generation.current;
     busy.current = true;
     const next = [...messages, { role: "user" as const, text: clean }].slice(-WINDOW);
@@ -97,10 +118,19 @@ export function Hed({ children }: { children: React.ReactNode }) {
       const response = await fetch("/api/hed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next, locale: lang }),
+        body: JSON.stringify({
+          messages: next,
+          locale: lang,
+          ...(thread.current ? { conversationId: thread.current } : {}),
+          ...(who ? { person: who } : {}),
+        }),
       });
-      const payload = (await response.json()) as { text?: string; signature?: string; error?: string };
+      const payload = (await response.json()) as { text?: string; signature?: string; conversationId?: string; error?: string };
       if (ticket !== generation.current) return;
+      if (payload.conversationId && !thread.current) {
+        thread.current = payload.conversationId;
+        sessionStorage.setItem(THREAD_ID, payload.conversationId);
+      }
       if (!response.ok || !payload.text) {
         const note = payload.error === "missing" ? t.hedMissing : payload.error === "rate" ? t.hedBusy : t.hedError;
         setNote(note);
@@ -122,11 +152,32 @@ export function Hed({ children }: { children: React.ReactNode }) {
   function reset() {
     generation.current += 1;
     busy.current = false;
+    thread.current = "";
     setPending(false);
     setMessages([]);
     setDraft("");
     setNote("");
+    setHeld("");
+    setGateNote("");
     sessionStorage.removeItem(STORAGE);
+    sessionStorage.removeItem(THREAD_ID);
+  }
+
+  function submitPerson() {
+    const trimmed: Person = {
+      name: person.name.trim(),
+      phone: person.phone.trim(),
+      role: person.role.trim(),
+    };
+    if (!trimmed.name || !trimmed.phone || !trimmed.role) {
+      setGateNote(t.hedGateError);
+      return;
+    }
+    sessionStorage.setItem(PERSON, JSON.stringify(trimmed));
+    const question = held;
+    setHeld("");
+    setGateNote("");
+    void send(question, trimmed);
   }
 
   return (
@@ -183,8 +234,69 @@ export function Hed({ children }: { children: React.ReactNode }) {
               {messages.length >= WINDOW - 10 ? <p className="hed-note">{t.hedLimit}</p> : null}
             </div>
             <p className="hed-credit">{t.botCredit}</p>
+            {held ? (
+              <form
+                className="hed-gate"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  submitPerson();
+                }}
+              >
+                <strong>{t.hedGateTitle}</strong>
+                <small>{t.hedGateLine}</small>
+                <label>
+                  <span>{t.hedGateName}</span>
+                  <input
+                    value={person.name}
+                    maxLength={120}
+                    autoComplete="name"
+                    data-clarity-mask="true"
+                    onChange={(event) => setPerson((current) => ({ ...current, name: event.target.value }))}
+                  />
+                </label>
+                <label>
+                  <span>{t.hedGatePhone}</span>
+                  <input
+                    value={person.phone}
+                    maxLength={120}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    dir="ltr"
+                    data-clarity-mask="true"
+                    onChange={(event) => setPerson((current) => ({ ...current, phone: event.target.value }))}
+                  />
+                </label>
+                <label>
+                  <span>{t.hedGateRole}</span>
+                  <input
+                    value={person.role}
+                    maxLength={120}
+                    autoComplete="organization-title"
+                    data-clarity-mask="true"
+                    onChange={(event) => setPerson((current) => ({ ...current, role: event.target.value }))}
+                  />
+                </label>
+                {gateNote ? <em>{gateNote}</em> : null}
+                <div className="hed-gate-row">
+                  <button type="submit">{t.hedGateSend}</button>
+                  <button
+                    type="button"
+                    className="hed-gate-back"
+                    onClick={() => {
+                      setDraft(held);
+                      setHeld("");
+                      setGateNote("");
+                    }}
+                  >
+                    {t.hedGateBack}
+                  </button>
+                </div>
+              </form>
+            ) : null}
             <form
               className="hed-form"
+              hidden={Boolean(held)}
               onSubmit={(event) => {
                 event.preventDefault();
                 send(draft);

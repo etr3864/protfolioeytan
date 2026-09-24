@@ -87,6 +87,14 @@ export type CvCopy = {
   hedBusy: string;
   hedMissing: string;
   hedLimit: string;
+  hedGateTitle: string;
+  hedGateLine: string;
+  hedGateName: string;
+  hedGatePhone: string;
+  hedGateRole: string;
+  hedGateSend: string;
+  hedGateBack: string;
+  hedGateError: string;
 };
 
 const linkedin = "https://www.linkedin.com/in/eytan-turgeman-269b5220b/";
@@ -190,7 +198,7 @@ export const cv: Record<Locale, CvCopy> = {
         logo: "/media/logos/digim.webp",
         url: "https://digim.co.il/",
         time: "ינואר 2025 עד יוני 2025",
-        place: "מחוז צפון",
+        place: "מחוז דרום",
         summary: "הייתי אחראי על הרכישה הממומנת של כמה לקוחות במקביל, בתחומי המסחר המקוון ויצירת הלידים. ניהלתי תקציבים חודשיים של מאות אלפי שקלים בגוגל, במטא ובפלטפורמות נוספות.",
         points: [
           "ניהלתי את מחזור החיים המלא של הקמפיינים: אסטרטגיה, קופירייטינג, הכוונת קריאייטיב, תכנון דפי נחיתה, ניהול תקציב ודיווח.",
@@ -341,6 +349,14 @@ export const cv: Record<Locale, CvCopy> = {
     hedBusy: "שי עמוס לרגע. אפשר לנסות שוב בעוד דקה.",
     hedMissing: "המפתח עדיין לא בשרת. שים GEMINI_API_KEY ב־.env.local.",
     hedLimit: "השיחה מלאה. השאלה הבאה תזיז את הראשונה החוצה.",
+    hedGateTitle: "רגע לפני התשובה",
+    hedGateLine: "כמה פרטים, ואיתן יוכל לחזור אליך בהמשך.",
+    hedGateName: "שם",
+    hedGatePhone: "טלפון",
+    hedGateRole: "תפקיד",
+    hedGateSend: "לתשובה",
+    hedGateBack: "חזרה לשאלה",
+    hedGateError: "צריך שם, טלפון ותפקיד.",
   },
   en: {
     dir: "ltr",
@@ -434,7 +450,7 @@ export const cv: Record<Locale, CvCopy> = {
         logo: "/media/logos/digim.webp",
         url: "https://digim.co.il/",
         time: "Jan 2025 to Jun 2025",
-        place: "North District",
+        place: "South District",
         summary: "Owned paid acquisition for multiple e-commerce and lead-gen clients, managing six-figure monthly budgets across Google, Meta and other platforms.",
         points: [
           "Ran the full campaign lifecycle: strategy, copywriting, creative direction, landing-page planning, budget management and reporting.",
@@ -585,6 +601,14 @@ export const cv: Record<Locale, CvCopy> = {
     hedBusy: "Shai is busy for a moment. Try again in a minute.",
     hedMissing: "The key is not on the server yet. Put GEMINI_API_KEY in .env.local.",
     hedLimit: "This conversation is full. The next question drops the first one.",
+    hedGateTitle: "One moment before the answer",
+    hedGateLine: "A few details, so Eytan can follow up with you.",
+    hedGateName: "Name",
+    hedGatePhone: "Phone",
+    hedGateRole: "Role",
+    hedGateSend: "Get the answer",
+    hedGateBack: "Back to the question",
+    hedGateError: "Name, phone and role are needed.",
   },
 };
 

@@ -25,13 +25,22 @@ type Detail = {
   messages: { role: "user" | "model"; text: string; at: string }[];
 };
 
-function when(value: string) {
-  const date = new Date(value);
-  return date.toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" });
+function instant(value: string) {
+  const date = new Date(value.includes("T") ? value : value.replace(" ", "T"));
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function clock(value: string) {
-  return new Date(value).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+function when(value: string) {
+  const date = instant(value);
+  if (!date) return value;
+  return date.toLocaleString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export function AdminBoard() {
@@ -214,7 +223,7 @@ export function AdminBoard() {
                 {row.preview ? <span className="adm-preview">{row.preview}</span> : null}
               </button>
               <button type="button" className="adm-del" aria-label="מחיקה" onClick={() => void remove(row.id)}>
-                מחיקה
+                ×
               </button>
             </li>
           ))}
@@ -238,7 +247,7 @@ export function AdminBoard() {
                   <p key={`${message.at}-${index}`} className={message.role === "user" ? "adm-mine" : "adm-agent"}>
                     <span className="adm-who">{message.role === "user" ? open.name : "שי"}</span>
                     {message.text}
-                    <span className="adm-at">{clock(message.at)}</span>
+                    <span className="adm-at">{when(message.at)}</span>
                   </p>
                 ))}
                 {!open.messages.length ? <p className="adm-note">השיחה ריקה.</p> : null}
